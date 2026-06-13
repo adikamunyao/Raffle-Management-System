@@ -1,72 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>LIVE RAFFLE DRAW</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎟️ LIVE DRAW — {{ prize.name }}</title>
     <style>
+        :root {
+            --gold: #f4c430;
+            --green: #a8ff78;
+            --bg: #0a0a0a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background: black;
+            background: var(--bg);
             color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            font-family: Arial;
+            padding: 20px;
+            overflow: hidden;
         }
 
-        .title {
-            font-size: 50px;
-            margin-top: 40px;
+        .event-label {
+            font-size: 13px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 16px;
         }
 
-        .box {
-            margin-top: 80px;
-            font-size: 40px;
+        .prize-name {
+            font-size: clamp(28px, 5vw, 52px);
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
 
-        .winner {
-            font-size: 60px;
-            color: gold;
-            margin-top: 30px;
+        .prize-qty {
+            font-size: 14px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 60px;
         }
 
-        .ticket {
-            font-size: 40px;
-            color: lightgreen;
+        .status-box {
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 50px;
         }
 
-        .hidden {
+        #status {
+            font-size: clamp(18px, 3vw, 28px);
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.05em;
+        }
+
+        #status.drawing {
+            animation: pulse 0.6s ease-in-out infinite alternate;
+            color: var(--gold);
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; transform: scale(0.98); }
+            to   { opacity: 1;   transform: scale(1.02); }
+        }
+
+        .winner-reveal {
             display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.6s ease;
         }
 
-        .spin {
-            font-size: 40px;
-            animation: blink 1s infinite;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes blink {
-            50% { opacity: 0.3; }
+        .winner-name {
+            font-size: clamp(32px, 6vw, 64px);
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 40px rgba(244,196,48,0.5);
         }
 
-        button {
-            padding: 15px 30px;
-            font-size: 20px;
-            margin-top: 30px;
+        .winner-ticket {
+            font-size: clamp(18px, 3vw, 28px);
+            font-family: monospace;
+            color: var(--green);
+            letter-spacing: 4px;
+            background: rgba(168,255,120,0.08);
+            padding: 10px 28px;
+            border-radius: 8px;
+            border: 1px solid rgba(168,255,120,0.2);
+        }
+
+        .draw-btn {
+            background: var(--gold);
+            color: #0a0a0a;
+            border: none;
+            padding: 18px 56px;
+            font-size: 18px;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 30px rgba(244,196,48,0.3);
+        }
+
+        .draw-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(244,196,48,0.5);
+        }
+
+        .draw-btn:active { transform: translateY(0); }
+        .draw-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { top: 110vh; transform: rotate(720deg); }
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 16px;
+            margin-top: 12px;
+            display: none;
         }
     </style>
 </head>
-
 <body>
 
-    <div class="title">🎟️ LIVE RAFFLE DRAW</div>
+<div class="event-label">🎟️ Live Raffle Draw</div>
+<div class="prize-name">{{ prize.name }}</div>
+<div class="prize-qty">{{ prize.quantity }} Winner{{ prize.quantity|pluralize }}</div>
 
-    <div class="box">
-        <div id="prizeName">{{ prize.name }}</div>
+<div class="status-box">
+    <div id="status">Ready to Draw...</div>
 
-        <div id="status" class="spin">Ready to Draw...</div>
-
-        <div id="winner" class="winner hidden"></div>
-        <div id="ticket" class="ticket hidden"></div>
+    <div class="winner-reveal" id="winnerReveal">
+        <div style="font-size: 40px;">🏆</div>
+        <div class="winner-name" id="winnerName"></div>
+        <div class="winner-ticket" id="winnerTicket"></div>
     </div>
 
-    <button onclick="drawWinner()">🎯 DRAW WINNER</button>
+    <div class="error-msg" id="errorMsg"></div>
+</div>
+
+<button class="draw-btn" id="drawBtn" onclick="drawWinner()">🎯 Draw Winner</button>
 
 <script>
 function getCookie(name) {
@@ -75,40 +176,67 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+function launchConfetti() {
+    const colors = ['#f4c430', '#a8ff78', '#ff6b6b', '#74b9ff', '#fd79a8'];
+    for (let i = 0; i < 80; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        el.style.animationDelay = (Math.random() * 1) + 's';
+        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4000);
+    }
+}
+
 function drawWinner() {
+    const btn = document.getElementById('drawBtn');
+    const status = document.getElementById('status');
+    const reveal = document.getElementById('winnerReveal');
+    const errorMsg = document.getElementById('errorMsg');
 
-    document.getElementById("status").innerText = "🎲 Drawing...";
-    document.getElementById("winner").classList.add("hidden");
-    document.getElementById("ticket").classList.add("hidden");
+    btn.disabled = true;
+    errorMsg.style.display = 'none';
+    reveal.style.display = 'none';
+    status.textContent = '🎲 Drawing...';
+    status.className = 'drawing';
 
-    fetch("/prizes/draw/{{ prize.id }}/", {
-        method: "POST",
-        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    fetch('/prizes/draw/{{ prize.id }}/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') }
     })
-        .then(res => res.json())
-        .then(data => {
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            setTimeout(() => {
+                status.textContent = '🏆 WINNER SELECTED!';
+                status.className = '';
 
-            if (data.status === "success") {
+                document.getElementById('winnerName').textContent = data.winner_name;
+                document.getElementById('winnerTicket').textContent = 'Ticket #' + data.ticket_number;
 
-                setTimeout(() => {
-
-                    document.getElementById("status").innerText = "🏆 WINNER SELECTED";
-
-                    document.getElementById("winner").innerText =
-                        "Name: " + data.winner_name;
-
-                    document.getElementById("ticket").innerText =
-                        "Ticket: " + data.ticket_number;
-
-                    document.getElementById("winner").classList.remove("hidden");
-                    document.getElementById("ticket").classList.remove("hidden");
-
-                }, 2000);
-
-            } else {
-                document.getElementById("status").innerText = data.message;
-            }
-        });
+                reveal.style.display = 'flex';
+                launchConfetti();
+                btn.disabled = false;
+                btn.textContent = '🎯 Draw Again';
+            }, 2000);
+        } else {
+            status.textContent = 'Ready to Draw...';
+            status.className = '';
+            errorMsg.textContent = '⚠️ ' + data.message;
+            errorMsg.style.display = 'block';
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        status.textContent = 'Ready to Draw...';
+        status.className = '';
+        errorMsg.textContent = '⚠️ Network error. Please try again.';
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+    });
 }
 </script>
 

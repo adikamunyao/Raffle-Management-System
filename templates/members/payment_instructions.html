@@ -9,86 +9,104 @@
 </div>
 {% endif %}
 
-<div style="max-width: 640px; margin: 0 auto;">
+<div style="max-width:660px; margin:0 auto;">
 
     <div class="page-header" style="text-align:center;">
-        <h1>💳 How to Pay & Get Tickets</h1>
-        <p>Follow these simple steps to secure your raffle tickets</p>
+        <h1>💳 How to Buy Raffle Tickets</h1>
+        <p>Follow these steps to pay and get your tickets</p>
     </div>
 
     <!-- STEP 1 -->
-    <div class="card" style="border-top: 4px solid var(--accent);">
-        <div style="display:flex; align-items:flex-start; gap: 16px;">
-            <div style="background: var(--accent); color: var(--primary); font-size: 20px; font-weight: 900;
-                        width: 44px; height: 44px; border-radius: 50%; display:flex; align-items:center;
-                        justify-content:center; flex-shrink:0;">1</div>
+    <div class="card" style="border-left:4px solid var(--accent);">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--primary);font-size:18px;font-weight:900;
+                        width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+                        justify-content:center;flex-shrink:0;">1</div>
             <div>
-                <div class="card-title" style="margin-bottom: 12px;">Go to M-Pesa on your phone</div>
-                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
-                    Open <strong>M-Pesa</strong> → Select <strong>Lipa na M-Pesa</strong> → Select <strong>Pay Bill</strong>
+                <div class="card-title" style="margin-bottom:10px;">Open M-Pesa on your phone</div>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">
+                    Go to <strong>M-Pesa</strong> → <strong>Send Money</strong> or <strong>Lipa na M-Pesa → Pay Bill</strong>
                 </p>
             </div>
         </div>
     </div>
 
     <!-- STEP 2 -->
-    <div class="card" style="border-top: 4px solid var(--primary);">
-        <div style="display:flex; align-items:flex-start; gap: 16px;">
-            <div style="background: var(--primary); color: white; font-size: 20px; font-weight: 900;
-                        width: 44px; height: 44px; border-radius: 50%; display:flex; align-items:center;
-                        justify-content:center; flex-shrink:0;">2</div>
+    <div class="card" style="border-left:4px solid var(--primary);">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="background:var(--primary);color:white;font-size:18px;font-weight:900;
+                        width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+                        justify-content:center;flex-shrink:0;">2</div>
             <div style="width:100%;">
-                <div class="card-title" style="margin-bottom: 16px;">Enter Payment Details</div>
+                <div class="card-title" style="margin-bottom:14px;">Send payment to KAG Clay Works</div>
 
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                    <div style="background: var(--bg); border-radius: 10px; padding: 16px; text-align:center;">
-                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-                                    color: var(--text-muted); margin-bottom: 6px;">Business Number</div>
-                        <div style="font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 2px;">400222</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+                    <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
+                                    color:var(--text-muted);margin-bottom:6px;">Paybill Number</div>
+                        <div style="font-size:28px;font-weight:900;color:var(--primary);letter-spacing:2px;">400222</div>
                     </div>
-                    <div style="background: var(--bg); border-radius: 10px; padding: 16px; text-align:center;">
-                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
-                                    color: var(--text-muted); margin-bottom: 6px;">Account Number</div>
-                        <div style="font-size: 22px; font-weight: 900; color: var(--primary);">1171076#RaffleDraw</div>
+                    <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;">
+                        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
+                                    color:var(--text-muted);margin-bottom:6px;">Account Number</div>
+                        <div style="font-size:18px;font-weight:900;color:var(--primary);">1171076#RaffleDraw</div>
                     </div>
                 </div>
 
-                <div class="alert alert-info" style="margin-top: 14px;">
-                    ℹ️ <strong>1 ticket = KSh 500.</strong> Pay multiples of 500 to get more tickets.
-                    e.g. KSh 1,000 = 2 tickets
+                {% if event %}
+                <div class="alert alert-info">
+                    ℹ️ <strong>1 ticket = KSh {{ event.ticket_price }}.</strong>
+                    Pay multiples of {{ event.ticket_price }} for more tickets.
+                    e.g. KSh {{ event.ticket_price|floatformat:0|add:"0" }} × 2 = 2 tickets.
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <!-- STEP 3 -->
-    <div class="card" style="border-top: 4px solid var(--success);">
-        <div style="display:flex; align-items:flex-start; gap: 16px;">
-            <div style="background: var(--success); color: white; font-size: 20px; font-weight: 900;
-                        width: 44px; height: 44px; border-radius: 50%; display:flex; align-items:center;
-                        justify-content:center; flex-shrink:0;">3</div>
+    <div class="card" style="border-left:4px solid var(--success);">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="background:var(--success);color:white;font-size:18px;font-weight:900;
+                        width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+                        justify-content:center;flex-shrink:0;">3</div>
             <div style="width:100%;">
-                <div class="card-title" style="margin-bottom: 12px;">Forward Your M-Pesa SMS to the Secretary</div>
-                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 14px; line-height: 1.6;">
-                    After payment, M-Pesa will send you a confirmation SMS. 
-                    <strong>Forward that exact message</strong> to the church secretary via WhatsApp or SMS.
+                <div class="card-title" style="margin-bottom:10px;">Paste your confirmation SMS into the system</div>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.7;margin-bottom:14px;">
+                    After paying, you will receive a confirmation SMS from CoopBank/M-Pesa.
+                    Click <strong>"Submit Payment"</strong> below and paste the full message exactly as received.
                 </p>
 
-                <div style="background: #1a1a2e; color: #a8ff78; border-radius: 10px; padding: 18px;
-                            font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.8;">
-                    <div style="color: #888; font-size: 11px; margin-bottom: 8px;">📱 Example M-Pesa SMS:</div>
-                    Dear John Kamau, you have sent Ksh. 500 to CHURCH PAYBILL for account 1171076#RaffleDraw on
-                    06/15/2025 at 10:30:00. MPESA Ref. ABC123XYZ. Transaction cost, Ksh. 0.
+                <div style="background:#0d1117;color:#7ee787;border-radius:10px;padding:16px;
+                            font-family:'Courier New',monospace;font-size:12.5px;line-height:1.9;">
+                    <div style="color:#8b949e;font-size:11px;margin-bottom:6px;">📱 Example SMS:</div>
+                    Dear EMMANUEL ADIKA, you have sent Ksh. 500.0 to K.A.G CLAYWORKS CHURCH for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.
                 </div>
 
-                <div class="alert alert-success" style="margin-top: 14px;">
-                    ✅ Once the secretary receives and processes your SMS, your tickets will be assigned automatically.
+                <div class="alert alert-warning" style="margin-top:14px;">
+                    ⚠️ If you don't have internet access, forward the SMS to the Youth Secretary who will submit it on your behalf.
                 </div>
             </div>
         </div>
     </div>
 
-    <div style="text-align:center; margin-top: 12px;">
+    <!-- STEP 4 -->
+    <div class="card" style="border-left:4px solid #7c3aed;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="background:#7c3aed;color:white;font-size:18px;font-weight:900;
+                        width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
+                        justify-content:center;flex-shrink:0;">4</div>
+            <div>
+                <div class="card-title" style="margin-bottom:10px;">Choose your ticket number & download</div>
+                <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">
+                    The system will verify your payment and let you pick your preferred ticket number(s) from those still available. You can then download and print your ticket PDF.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="{% url 'submit_payment' %}" class="btn btn-primary btn-lg">📩 Submit Payment SMS →</a>
         <a href="{% url 'member_signup' %}" class="btn btn-outline">← Register Another Person</a>
     </div>
 

@@ -1,42 +1,65 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Draw Control Panel</title>
+{% extends "base.html" %}
+{% block title %}Draw Control Panel{% endblock %}
 
-    <style>
-        body { font-family: Arial; padding: 20px; }
+{% block content %}
 
-        .prize {
-            border: 1px solid #ccc;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background: green;
-            color: white;
-            border: none;
-        }
-    </style>
-</head>
-
-<body>
-
-<h1>🎛 Draw Control Panel</h1>
-
-{% for prize in prizes %}
-
-<div class="prize">
-    <h3>{{ prize.name }}</h3>
-    <p>Quantity: {{ prize.quantity }}</p>
-
-    <a href="/prizes/live/{{ prize.id }}/" target="_blank">
-        <button>OPEN LIVE SCREEN</button>
-    </a>
+<div class="page-header">
+    <h1>🎛️ Draw Control Panel</h1>
+    <p>Manage and trigger prize draws for this event</p>
 </div>
 
-{% endfor %}
+{% if prizes %}
+<div class="grid-2">
+    {% for prize in prizes %}
+    <div class="card" style="border-top: 4px solid {% if prize.active %}var(--success){% else %}var(--border){% endif %};">
 
-</body>
-</html>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 14px;">
+            <div>
+                <div style="font-size: 18px; font-weight: 800; color: var(--primary);">{{ prize.name }}</div>
+                <div style="color: var(--text-muted); font-size: 13px; margin-top: 2px;">Position #{{ prize.position }}</div>
+            </div>
+            <div style="text-align:right;">
+                <span class="badge {% if prize.active %}badge-verified{% else %}badge-rejected{% endif %}">
+                    {% if prize.active %}Active{% else %}Inactive{% endif %}
+                </span>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Qty: {{ prize.quantity }}</div>
+            </div>
+        </div>
+
+        {% if prize.description %}
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">{{ prize.description }}</p>
+        {% endif %}
+
+        <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+            <a href="{% url 'prizes:live_draw_screen' prize.id %}" target="_blank" class="btn btn-primary">
+                🖥️ Open Live Screen
+            </a>
+        </div>
+
+        {% if prize.winners.exists %}
+        <hr class="divider">
+        <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">🏆 Winners</div>
+        {% for w in prize.winners.all %}
+        <div style="display:flex; align-items:center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
+            <div style="font-size: 20px;">🥇</div>
+            <div>
+                <div style="font-weight: 600;">{{ w.ticket.member.name }}</div>
+                <div style="color: var(--text-muted); font-size: 12px; font-family: monospace;">Ticket #{{ w.ticket.formatted_number }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="empty">
+        <div class="empty-icon">🎁</div>
+        No prizes configured for this event yet.
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

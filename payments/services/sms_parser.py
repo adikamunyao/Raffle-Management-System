@@ -3,71 +3,58 @@ from decimal import Decimal
 from datetime import datetime
 
 
-class MpesaSMSParserError(Exception):
+class SMSParserError(Exception):
     pass
 
 
-class MpesaSMSParser:
+class CoopBankSMSParser:
+    """
+    Parses the CoopBank/M-Pesa confirmation SMS used by KAG Clay Works.
 
-    NAME_PATTERN = r"Dear\s+(.*?),"
-    AMOUNT_PATTERN = r"sent\s+Ksh\.\s*([\d,]+(?:\.\d+)?)"
-    RECIPIENT_PATTERN = r"to\s+(.*?)\s+for"
-    ACCOUNT_PATTERN = r"for\s+(.*?)\s+on"
+    Sample:
+      Dear EMMANUEL ADIKA, you have sent Ksh. 10.0 to K.A.G CLAYWORKS CHURCH
+      for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.
+    """
+
+    NAME_PATTERN     = r"Dear\s+([A-Z][A-Z\s]+?),"
+    AMOUNT_PATTERN   = r"sent\s+Ksh\.\s*([\d,]+(?:\.\d+)?)"
     DATETIME_PATTERN = r"on\s+(\d{2}/\d{2}/\d{4})\s+at\s+(\d{2}:\d{2}:\d{2})"
-    REFERENCE_PATTERN = r"MPESA\s+Ref\.\s*([A-Z0-9]+)"
+    REF_PATTERN      = r"MPESA\s+Ref\.\s*([A-Z0-9]+)"
 
     @classmethod
-    def parse(cls, sms):
+    def parse(cls, sms: str) -> dict:
+        sms = sms.strip()
 
-        try:
+        name_m   = re.search(cls.NAME_PATTERN,     sms, re.IGNORECASE)
+        amount_m = re.search(cls.AMOUNT_PATTERN,   sms, re.IGNORECASE)
+        dt_m     = re.search(cls.DATETIME_PATTERN, sms, re.IGNORECASE)
+        ref_m    = re.search(cls.REF_PATTERN,      sms, re.IGNORECASE)
 
-            name = re.search(
-                cls.NAME_PATTERN,
-                sms
-            ).group(1)
+        missing = []
+        if not name_m:   missing.append("sender name (Dear ...)")
+        if not amount_m: missing.append("amount (sent Ksh. ...)")
+        if not ref_m:    missing.append("MPESA Ref.")
 
-            amount = Decimal(
-                re.search(
-                    cls.AMOUNT_PATTERN,
-                    sms
-                ).group(1)
+        if missing:
+            raise SMSParserError(
+                f"Could not read {', '.join(missing)} from the SMS. "
+                "Please paste the full unedited CoopBank confirmation message."
             )
 
-            recipient = re.search(
-                cls.RECIPIENT_PATTERN,
-                sms
-            ).group(1)
+        amount = Decimal(amount_m.group(1).replace(",", ""))
 
-            account_reference = re.search(
-                cls.ACCOUNT_PATTERN,
-                sms
-            ).group(1)
+        transaction_datetime = None
+        if dt_m:
+            try:
+                transaction_datetime = datetime.strptime(
+                    f"{dt_m.group(1)} {dt_m.group(2)}", "%m/%d/%Y %H:%M:%S"
+                )
+            except ValueError:
+                pass
 
-            date_str, time_str = re.search(
-                cls.DATETIME_PATTERN,
-                sms
-            ).groups()
-
-            mpesa_reference = re.search(
-                cls.REFERENCE_PATTERN,
-                sms
-            ).group(1)
-
-            transaction_datetime = datetime.strptime(
-                f"{date_str} {time_str}",
-                "%m/%d/%Y %H:%M:%S"
-            )
-
-            return {
-                "name": name.strip(),
-                "amount": amount,
-                "recipient": recipient.strip(),
-                "account_reference": account_reference.strip(),
-                "transaction_datetime": transaction_datetime,
-                "mpesa_reference": mpesa_reference.strip(),
-            }
-
-        except Exception as e:
-            raise MpesaSMSParserError(
-                str(e)
-            )
+        return {
+            "name":                 name_m.group(1).strip().title(),
+            "amount":               amount,
+            "bank_reference":       ref_m.group(1).strip(),
+            "transaction_datetime": transaction_datetime,
+        }

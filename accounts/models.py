@@ -1,6 +1,7 @@
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+DEFAULT_PASSWORD = "YouthDay@2026"
 
 
 class User(AbstractUser):
@@ -15,11 +16,22 @@ class User(AbstractUser):
         (ADMIN, "Admin"),
     ]
 
+    ROLE_DESCRIPTIONS = {
+        SECRETARY: "Submits M-Pesa SMS messages and generates tickets for members.",
+        TREASURER: "Views payment records and financial summaries.",
+        ADMIN: "Manages events, prizes, draws and all staff accounts.",
+    }
+
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
         default=SECRETARY,
         db_index=True,
+    )
+
+    must_change_password = models.BooleanField(
+        default=True,
+        help_text="Force password change on next login."
     )
 
     def is_secretary(self):

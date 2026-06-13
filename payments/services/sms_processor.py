@@ -2,14 +2,9 @@ from django.db import transaction
 
 from members.models import Member
 from payments.models import Payment
+from payments.services.sms_parser import CoopBankSMSParser, SMSParserError
+from payments.services.payment_processor import PaymentProcessor
 
-from payments.services.sms_parser import (
-    MpesaSMSParser
-)
-
-from payments.services.payment_processor import (
-    PaymentProcessor
-)
 
 class SMSProcessorError(Exception):
     pass
@@ -19,50 +14,34 @@ class SMSProcessor:
 
     @classmethod
     @transaction.atomic
-    def process(
-        cls,
-        *,
-        sms_text,
-        phone_number,
-        event,
-        user
-    ):
+    def process(cls, *, sms_text, member, event, user, chosen_numbers):
 
-        parsed = MpesaSMSParser.parse(
-            sms_text
-        )
+        parsed = CoopBankSMSParser.parse(sms_text)
 
-        member, _ = Member.objects.get_or_create(
-            phone_number=phone_number,
-            defaults={
-                "name": parsed["name"]
-            }
-        )
+        # Update member name from SMS if it was not set
+        if parsed["name"] and not member.name:
+            member.name = parsed["name"]
+            member.save(update_fields=["name"])
 
-        if Payment.objects.filter(
-            mpesa_reference=parsed["mpesa_reference"]
-        ).exists():
-
+        if Payment.objects.filter(bank_reference=parsed["bank_reference"]).exists():
             raise SMSProcessorError(
-                "This M-Pesa reference has already been used."
+                f"Transaction {parsed['bank_reference']} has already been processed."
             )
 
         payment = Payment.objects.create(
             event=event,
             member=member,
             amount=parsed["amount"],
-            mpesa_reference=parsed["mpesa_reference"],
+            bank_reference=parsed["bank_reference"],
             sms_text=sms_text,
             processed_by=user,
-            status=Payment.VERIFIED
+            status=Payment.VERIFIED,
         )
 
-        tickets = PaymentProcessor.process(
-            payment
-        )
+        tickets = PaymentProcessor.process(payment, chosen_numbers)
 
         return {
-            "member": member,
+            "member":  member,
             "payment": payment,
-            "tickets": tickets
+            "tickets": tickets,
         }

@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Choose Ticket Numbers{% endblock %}
+
+{% block content %}
+<div style="max-width:700px; margin:0 auto;">
+
+    <div class="page-header">
+        <h1>🎯 Choose Ticket Numbers</h1>
+        <p>Payment verified — select ticket numbers for this member</p>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px;">
+        <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div>
+                <div class="stat-label">Payer</div>
+                <div style="font-weight:700;font-size:15px;">{{ parsed.name }}</div>
+                <div style="color:var(--text-muted);font-size:12px;">{{ phone_number }}</div>
+            </div>
+        </div>
+        <div class="stat-card accent">
+            <div class="stat-icon">💰</div>
+            <div>
+                <div class="stat-label">Amount · Tickets</div>
+                <div style="font-weight:700;font-size:15px;">KSh {{ parsed.amount }}</div>
+                <div style="color:var(--text-muted);font-size:12px;">
+                    = {{ ticket_count }} ticket{{ ticket_count|pluralize }} &nbsp;·&nbsp;
+                    Ref: <span style="font-family:monospace;">{{ parsed.bank_reference }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        ℹ️ Select exactly <strong>{{ ticket_count }}</strong> ticket number{{ ticket_count|pluralize }} from the available (green) slots.
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="sms_text"     value="{{ sms_text }}">
+        <input type="hidden" name="phone_number" value="{{ phone_number }}">
+        <input type="hidden" name="confirm"      value="1">
+
+        <div class="card">
+            <div class="card-title">Available Ticket Numbers</div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+                {% for n in available %}
+                <label style="cursor:pointer;">
+                    <input type="checkbox" name="ticket_numbers" value="{{ n }}"
+                           style="display:none;" class="ticket-cb">
+                    <span class="ticket-btn"
+                          style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+                                 border-radius:10px;font-size:13px;font-weight:700;background:#f0fdf4;
+                                 color:#166534;border:2px solid #bbf7d0;cursor:pointer;transition:all 0.15s;">
+                        {{ n }}
+                    </span>
+                </label>
+                {% endfor %}
+                {% for n in taken %}
+                <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+                             border-radius:10px;font-size:13px;font-weight:700;background:#fef2f2;
+                             color:#991b1b;border:2px solid #fecaca;text-decoration:line-through;cursor:not-allowed;">
+                    {{ n }}
+                </span>
+                {% endfor %}
+            </div>
+
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">
+                Selected: <strong id="selCount">0</strong> / {{ ticket_count }}
+            </p>
+
+            <div style="display:flex;gap:12px;">
+                <button type="submit" id="confirmBtn" class="btn btn-primary btn-lg" disabled>
+                    ✅ Confirm & Generate Tickets
+                </button>
+                <a href="{% url 'submit_sms' %}" class="btn btn-outline">← Back</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+const required = {{ ticket_count }};
+document.querySelectorAll('.ticket-cb').forEach(cb => {
+    cb.addEventListener('change', () => {
+        const span    = cb.nextElementSibling;
+        const checked = document.querySelectorAll('.ticket-cb:checked').length;
+
+        if (cb.checked && checked > required) {
+            cb.checked = false;
+            return;
+        }
+        span.style.background  = cb.checked ? '#1a3a5c' : '#f0fdf4';
+        span.style.borderColor = cb.checked ? '#1a3a5c' : '#bbf7d0';
+        span.style.color       = cb.checked ? '#e8a020' : '#166534';
+
+        const total = document.querySelectorAll('.ticket-cb:checked').length;
+        document.getElementById('selCount').textContent = total;
+        document.getElementById('confirmBtn').disabled  = (total !== required);
+    });
+});
+</script>
+{% endblock %}

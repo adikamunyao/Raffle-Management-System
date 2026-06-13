@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div style="text-align:center; padding: 56px 20px 40px; max-width: 680px; margin: 0 auto;">
+    <div style="display:inline-flex; align-items:center; justify-content:center;
+                width:80px; height:80px; background:var(--primary); border-radius:20px;
+                font-size:38px; margin-bottom:20px; box-shadow: 0 8px 24px rgba(26,58,92,0.3);">
+        ✝️
+    </div>
+    <h1 style="font-size:clamp(28px,5vw,40px); font-weight:900; color:var(--primary); line-height:1.15; margin-bottom:12px;">
+        KAG Clay Works<br>
+        <span style="color:var(--accent);">Raffle Draw {% if event %}— {{ event.name }}{% endif %}</span>
+    </h1>
+    <p style="font-size:16px; color:var(--text-muted); line-height:1.7; margin-bottom:32px;">
+        Support the Youth Day by purchasing raffle tickets.
+        Pay via M-Pesa Paybill, submit your SMS, and choose your lucky number.
+        Winners will be drawn on
+        <strong>{% if event %}{{ event.draw_date }}{% else %}a date to be announced{% endif %}</strong>.
+    </p>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">
+            🎫 Register &amp; Get Tickets
+        </a>
+        <a href="{% url 'payment_instructions' %}" class="btn btn-outline btn-lg">
+            💳 How to Pay
+        </a>
+    </div>
+</div>
+
+<!-- STATS STRIP -->
+{% if event %}
+<div class="grid-3" style="margin-bottom:32px;">
+    <div class="stat-card">
+        <div class="stat-icon">🎟️</div>
+        <div>
+            <div class="stat-label">Ticket Price</div>
+            <div class="stat-value">KSh {{ event.ticket_price|floatformat:0 }}</div>
+        </div>
+    </div>
+    <div class="stat-card accent">
+        <div class="stat-icon">📅</div>
+        <div>
+            <div class="stat-label">Draw Date</div>
+            <div class="stat-value" style="font-size:18px;">{{ event.draw_date }}</div>
+        </div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-icon">👥</div>
+        <div>
+            <div class="stat-label">Participants</div>
+            <div class="stat-value">{{ total_members }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- HOW IT WORKS -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-title">⚡ How It Works</div>
+    <div class="grid-3" style="gap:24px;">
+
+        <div style="text-align:center; padding:8px;">
+            <div style="font-size:36px; margin-bottom:10px;">📱</div>
+            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">1. Pay via M-Pesa</div>
+            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+                Send <strong>KSh {{ event.ticket_price|default:"500" }}</strong> per ticket to Paybill
+                <strong>400222</strong>, Account <strong>1171076#RaffleDraw</strong>
+            </p>
+        </div>
+
+        <div style="text-align:center; padding:8px;">
+            <div style="font-size:36px; margin-bottom:10px;">📩</div>
+            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">2. Submit Your SMS</div>
+            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+                Register below and paste your CoopBank confirmation SMS into the system — or forward it to the Youth Secretary.
+            </p>
+        </div>
+
+        <div style="text-align:center; padding:8px;">
+            <div style="font-size:36px; margin-bottom:10px;">🎯</div>
+            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">3. Pick Your Number</div>
+            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+                Choose your preferred ticket number from those still available and download your ticket PDF.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- SAMPLE SMS -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-title">📋 Sample CoopBank Confirmation SMS</div>
+    <div style="background:#0d1117; color:#7ee787; border-radius:10px; padding:18px;
+                font-family:'Courier New',monospace; font-size:13px; line-height:1.9;">
+        <span style="color:#8b949e; font-size:11px;">Expected format:</span><br>
+        Dear JOHN KAMAU, you have sent Ksh. 500.0 to K.A.G CLAYWORKS CHURCH for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.
+    </div>
+    <p style="color:var(--text-muted); font-size:13px; margin-top:12px;">
+        ⚠️ Paste the SMS exactly as received — do not edit or shorten it.
+    </p>
+</div>
+
+<!-- BOTTOM CTA -->
+<div style="text-align:center; padding: 16px 0 8px;">
+    <p style="color:var(--text-muted); font-size:14px; margin-bottom:16px;">
+        Already paid? Submit your SMS and choose your ticket number now.
+    </p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">
+            🎫 Register Now
+        </a>
+        <a href="{% url 'submit_payment' %}" class="btn btn-accent btn-lg">
+            📩 Already Registered? Submit SMS
+        </a>
+    </div>
+    <p style="margin-top:24px; color:var(--text-muted); font-size:13px;">
+        Officials
+        <a href="{% url 'login' %}" style="color:var(--primary); font-weight:600;">Staff Login →</a>
+    </p>
+</div>
+
+{% endblock %}

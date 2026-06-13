@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Submit Your Payment{% endblock %}
+
+{% block content %}
+<div style="max-width:700px; margin:0 auto;">
+
+    <div class="page-header">
+        <h1>📩 Submit Your Payment SMS</h1>
+        <p>Welcome, <strong>{{ member.name }}</strong> — paste your CoopBank confirmation SMS below</p>
+    </div>
+
+    <div class="card">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>CoopBank Confirmation SMS</label>
+                <textarea name="sms_text" rows="5" required
+                    placeholder="Dear JOHN KAMAU, you have sent Ksh. 500.0 to K.A.G CLAYWORKS CHURCH for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.">{{ sms_text|default:'' }}</textarea>
+                <p style="color:var(--text-muted);font-size:12px;margin-top:4px;">
+                    Paste the exact SMS as received — do not edit it.
+                </p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg">
+                Check Payment →
+            </button>
+        </form>
+    </div>
+
+    <!-- Ticket Board -->
+    <div class="card">
+        <div class="card-title">🎫 Ticket Numbers — {{ event.name }}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;">
+                <span style="width:12px;height:12px;background:#dcfce7;border-radius:3px;display:inline-block;border:1px solid #bbf7d0;"></span> Available
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;">
+                <span style="width:12px;height:12px;background:#fee2e2;border-radius:3px;display:inline-block;border:1px solid #fecaca;"></span> Taken
+            </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            {% for n in available %}
+            <span style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+                         border-radius:8px;font-size:13px;font-weight:700;background:#f0fdf4;
+                         color:#166534;border:1px solid #bbf7d0;">{{ n }}</span>
+            {% endfor %}
+            {% for n in taken %}
+            <span style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+                         border-radius:8px;font-size:13px;font-weight:700;background:#fef2f2;
+                         color:#991b1b;border:1px solid #fecaca;text-decoration:line-through;">{{ n }}</span>
+            {% endfor %}
+        </div>
+        <p style="color:var(--text-muted);font-size:12px;margin-top:12px;">
+            {{ available|length }} of {{ event.max_ticket_number }} tickets still available
+        </p>
+    </div>
+
+</div>
+{% endblock %}

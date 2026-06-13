@@ -1,22 +1,46 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+{% block title %}Tickets Generated{% endblock %}
 
 {% block content %}
 
-<div class="card">
-    <h2>✅ Processing Complete</h2>
+<div style="max-width: 640px; margin: 0 auto;">
 
-    <p><b>Member:</b> {{ member.name }}</p>
-    <p><b>Payment:</b> {{ payment.amount }}</p>
+    <div style="text-align:center; margin-bottom: 32px;">
+        <div style="font-size: 56px; margin-bottom: 12px;">✅</div>
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--success);">Payment Processed!</h1>
+        <p style="color: var(--text-muted); margin-top: 6px;">Tickets have been generated successfully</p>
+    </div>
 
-    <h3>🎫 Tickets Generated</h3>
+    <div class="grid-2" style="margin-bottom: 24px;">
+        <div class="card" style="border-top: 3px solid var(--primary);">
+            <div class="stat-label">Member</div>
+            <div style="font-size: 20px; font-weight: 700; margin-top: 4px;">{{ member.name }}</div>
+            <div style="color: var(--text-muted); font-size: 13px; margin-top: 2px;">📱 {{ member.phone_number }}</div>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--accent-dark);">
+            <div class="stat-label">Amount Paid</div>
+            <div style="font-size: 20px; font-weight: 700; margin-top: 4px;">KSh {{ payment.amount }}</div>
+            <div style="color: var(--text-muted); font-size: 13px; margin-top: 2px; font-family: monospace;">{{ payment.bank_reference }}</div>
+        </div>
+    </div>
 
-    {% for t in tickets %}
-        <p>Ticket: {{ t.formatted_number }}</p>
-    {% endfor %}
+    <div class="card">
+        <div class="card-title">🎫 {{ tickets|length }} Ticket{{ tickets|length|pluralize }} Generated</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            {% for t in tickets %}
+            <div style="background: var(--primary); color: var(--accent); font-size: 22px; font-weight: 900;
+                        padding: 14px 20px; border-radius: 10px; font-family: monospace; letter-spacing: 2px;">
+                #{{ t.formatted_number }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
-    <a href="{% url 'dashboard_home' %}">
-        <button class="btn">Back to Dashboard</button>
-    </a>
+    <div style="display:flex; gap:12px; margin-top: 8px;">
+        <a href="{% url 'submit_sms' %}" class="btn btn-primary">+ Process Another SMS</a>
+        <a href="{% url 'dashboard_home' %}" class="btn btn-outline">← Dashboard</a>
+    </div>
+
 </div>
 
 {% endblock %}

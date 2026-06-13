@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Choose Your Ticket Numbers{% endblock %}
+
+{% block content %}
+<div style="max-width:700px; margin:0 auto;">
+
+    <div class="page-header">
+        <h1>🎯 Choose Your Ticket Numbers</h1>
+        <p>Your payment has been verified — now select your ticket number(s)</p>
+    </div>
+
+    <!-- Payment summary -->
+    <div class="grid-2" style="margin-bottom:20px;">
+        <div class="stat-card">
+            <div class="stat-icon">👤</div>
+            <div>
+                <div class="stat-label">Payer Name</div>
+                <div style="font-weight:700;font-size:16px;">{{ parsed.name }}</div>
+            </div>
+        </div>
+        <div class="stat-card accent">
+            <div class="stat-icon">💰</div>
+            <div>
+                <div class="stat-label">Amount Paid</div>
+                <div style="font-weight:700;font-size:16px;">KSh {{ parsed.amount }}</div>
+                <div style="color:var(--text-muted);font-size:12px;">= {{ ticket_count }} ticket{{ ticket_count|pluralize }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        ℹ️ Select exactly <strong>{{ ticket_count }} number{{ ticket_count|pluralize }}</strong> from the available tickets below (green). Red numbers are already taken.
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="sms_text" value="{{ sms_text }}">
+        <input type="hidden" name="confirm" value="1">
+
+        <div class="card">
+            <div class="card-title">🎫 Pick {{ ticket_count }} Ticket Number{{ ticket_count|pluralize }}</div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;" id="ticketGrid">
+                {% for n in available %}
+                <label style="cursor:pointer;">
+                    <input type="checkbox" name="ticket_numbers" value="{{ n }}"
+                           style="display:none;" class="ticket-cb">
+                    <span class="ticket-btn" data-num="{{ n }}"
+                          style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+                                 border-radius:10px;font-size:14px;font-weight:700;background:#f0fdf4;
+                                 color:#166534;border:2px solid #bbf7d0;cursor:pointer;transition:all 0.15s;
+                                 user-select:none;">{{ n }}</span>
+                </label>
+                {% endfor %}
+                {% for n in taken %}
+                <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;
+                             border-radius:10px;font-size:14px;font-weight:700;background:#fef2f2;
+                             color:#991b1b;border:2px solid #fecaca;text-decoration:line-through;
+                             cursor:not-allowed;">{{ n }}</span>
+                {% endfor %}
+            </div>
+
+            <div id="selectionInfo" style="margin-bottom:16px;font-size:14px;color:var(--text-muted);">
+                Selected: <strong id="selCount">0</strong> / {{ ticket_count }}
+            </div>
+
+            <div id="selectionError" class="alert alert-error" style="display:none;"></div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button type="submit" id="confirmBtn" class="btn btn-primary btn-lg" disabled>
+                    ✅ Confirm & Get Tickets
+                </button>
+                <a href="{% url 'submit_payment' %}" class="btn btn-outline">← Back</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script>
+const required = {{ ticket_count }};
+const checkboxes = document.querySelectorAll('.ticket-cb');
+const confirmBtn = document.getElementById('confirmBtn');
+const selCount   = document.getElementById('selCount');
+const selError   = document.getElementById('selectionError');
+
+checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        const checked = document.querySelectorAll('.ticket-cb:checked');
+        const span    = cb.nextElementSibling;
+
+        if (cb.checked && checked.length > required) {
+            cb.checked = false;
+            span.style.background = '#f0fdf4';
+            span.style.borderColor = '#bbf7d0';
+            span.style.color = '#166534';
+            selError.style.display = 'flex';
+            selError.textContent = `⚠️ You can only select ${required} ticket(s).`;
+            return;
+        }
+
+        if (cb.checked) {
+            span.style.background   = '#1a3a5c';
+            span.style.borderColor  = '#1a3a5c';
+            span.style.color        = '#e8a020';
+        } else {
+            span.style.background   = '#f0fdf4';
+            span.style.borderColor  = '#bbf7d0';
+            span.style.color        = '#166534';
+        }
+
+        const total = document.querySelectorAll('.ticket-cb:checked').length;
+        selCount.textContent = total;
+
+        if (total === required) {
+            confirmBtn.disabled = false;
+            selError.style.display = 'none';
+        } else {
+            confirmBtn.disabled = true;
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,15 +1,70 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+{% block title %}Submit SMS{% endblock %}
 
 {% block content %}
+<div style="max-width: 640px; margin: 0 auto;">
 
-<div class="card">
-    <h2>📩 Submit M-Pesa SMS</h2>
+    <div class="page-header">
+        <h1>📩 Submit M-Pesa SMS</h1>
+        <p>Paste the member's M-Pesa confirmation message to auto-generate their tickets</p>
+    </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn" type="submit">Process SMS</button>
-    </form>
+    {% if not form.event.field.queryset %}
+    <div class="alert alert-warning">
+        ⚠️ No active raffle events found. Please ask the Admin to activate an event before submitting payments.
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Raffle Event</label>
+                <select name="event" required>
+                    <option value="">-- Select Active Event --</option>
+                    {% for event in form.event.field.queryset %}
+                        <option value="{{ event.pk }}"
+                            {% if form.event.value|stringformat:"s" == event.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ event.name }} — KSh {{ event.ticket_price }} per ticket
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if form.event.errors %}
+                    <p class="form-error">{{ form.event.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Member Phone Number</label>
+                <input type="text" name="phone_number"
+                    placeholder="e.g. 0712345678"
+                    value="{{ form.phone_number.value|default:'' }}" required>
+                {% if form.phone_number.errors %}
+                    <p class="form-error">{{ form.phone_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>M-Pesa SMS Text</label>
+                <textarea name="sms_text" rows="6"
+                    placeholder="Dear John Kamau, you have sent Ksh. 500 to CHURCH PAYBILL for account 1171076#RaffleDraw on 06/15/2025 at 10:30:00. MPESA Ref. ABC123XYZ..."
+                    required>{{ form.sms_text.value|default:'' }}</textarea>
+                {% if form.sms_text.errors %}
+                    <p class="form-error">{{ form.sms_text.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="alert alert-info">
+                💡 The system extracts the member name, amount paid and M-Pesa reference automatically. Tickets are generated based on <strong>Amount ÷ Ticket Price</strong>.
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:8px; flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">⚙️ Process SMS →</button>
+                <a href="{% url 'dashboard_home' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+
 </div>
-
 {% endblock %}

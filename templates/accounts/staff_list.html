@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Staff Management{% endblock %}
+
+{% block content %}
+
+<div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+    <div class="page-header" style="margin-bottom:0;">
+        <h1>👥 Staff Management</h1>
+        <p>All staff accounts — Secretaries, Treasurers and Admins</p>
+    </div>
+    <a href="{% url 'create_staff' %}" class="btn btn-primary">+ Add Staff Member</a>
+</div>
+
+<!-- Role Guide -->
+<div class="grid-3" style="margin-bottom:24px;">
+    <div class="card" style="border-top:3px solid #5b21b6; padding:18px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5b21b6; margin-bottom:6px;">Secretary</div>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Submits M-Pesa SMS messages and generates tickets for members.</p>
+    </div>
+    <div class="card" style="border-top:3px solid #9d174d; padding:18px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#9d174d; margin-bottom:6px;">Treasurer</div>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Views payment records and financial summaries.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent-dark); padding:18px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent-dark); margin-bottom:6px;">Admin</div>
+        <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Manages events, prizes, draws and all staff accounts.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-title">👤 All Staff Accounts</div>
+    {% if staff %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Password Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in staff %}
+                <tr>
+                    <td style="font-weight:600;">{{ member.get_full_name|default:"—" }}</td>
+                    <td style="font-family:monospace; font-size:13px;">{{ member.username }}</td>
+                    <td style="color:var(--text-muted);">{{ member.email|default:"—" }}</td>
+                    <td><span class="badge badge-{{ member.role|lower }}">{{ member.role }}</span></td>
+                    <td>
+                        {% if member.must_change_password %}
+                            <span class="badge badge-pending">Default Password</span>
+                        {% else %}
+                            <span class="badge badge-verified">Changed</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if member != request.user %}
+                        <form method="POST" action="{% url 'reset_password' member.id %}"
+                              onsubmit="return confirm('Reset password for {{ member.get_full_name|default:member.username }}?');"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">↺ Reset</button>
+                        </form>
+                        {% else %}
+                        <span style="color:var(--text-muted); font-size:12px;">— You —</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty">
+        <div class="empty-icon">👤</div>
+        No staff accounts yet. <a href="{% url 'create_staff' %}">Create one</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
