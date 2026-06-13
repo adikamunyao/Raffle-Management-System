@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h2>✅ Processing Complete</h2>
+
+    <p><b>Member:</b> {{ member.name }}</p>
+    <p><b>Payment:</b> {{ payment.amount }}</p>
+
+    <h3>🎫 Tickets Generated</h3>
+
+    {% for t in tickets %}
+        <p>Ticket: {{ t.formatted_number }}</p>
+    {% endfor %}
+
+    <a href="{% url 'dashboard_home' %}">
+        <button class="btn">Back to Dashboard</button>
+    </a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LIVE RAFFLE DRAW</title>
+
+    <style>
+        body {
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: Arial;
+        }
+
+        .title {
+            font-size: 50px;
+            margin-top: 40px;
+        }
+
+        .box {
+            margin-top: 80px;
+            font-size: 40px;
+        }
+
+        .winner {
+            font-size: 60px;
+            color: gold;
+            margin-top: 30px;
+        }
+
+        .ticket {
+            font-size: 40px;
+            color: lightgreen;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .spin {
+            font-size: 40px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="title">🎟️ LIVE RAFFLE DRAW</div>
+
+    <div class="box">
+        <div id="prizeName">{{ prize.name }}</div>
+
+        <div id="status" class="spin">Ready to Draw...</div>
+
+        <div id="winner" class="winner hidden"></div>
+        <div id="ticket" class="ticket hidden"></div>
+    </div>
+
+    <button onclick="drawWinner()">🎯 DRAW WINNER</button>
+
+<script>
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function drawWinner() {
+
+    document.getElementById("status").innerText = "🎲 Drawing...";
+    document.getElementById("winner").classList.add("hidden");
+    document.getElementById("ticket").classList.add("hidden");
+
+    fetch("/prizes/draw/{{ prize.id }}/", {
+        method: "POST",
+        headers: { "X-CSRFToken": getCookie("csrftoken") }
+    })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.status === "success") {
+
+                setTimeout(() => {
+
+                    document.getElementById("status").innerText = "🏆 WINNER SELECTED";
+
+                    document.getElementById("winner").innerText =
+                        "Name: " + data.winner_name;
+
+                    document.getElementById("ticket").innerText =
+                        "Ticket: " + data.ticket_number;
+
+                    document.getElementById("winner").classList.remove("hidden");
+                    document.getElementById("ticket").classList.remove("hidden");
+
+                }, 2000);
+
+            } else {
+                document.getElementById("status").innerText = data.message;
+            }
+        });
+}
+</script>
+
+</body>
+</html>

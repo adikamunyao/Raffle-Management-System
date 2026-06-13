@@ -1,0 +1,36 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="grid">
+
+    <div class="card">
+        <h2>📊 Stats</h2>
+        <p>Total Payments: {{ total_payments }}</p>
+        <p>Total Tickets: {{ total_tickets }}</p>
+    </div>
+
+    <div class="card">
+        <h2>⚡ Quick Actions</h2>
+        <a href="{% url 'submit_sms' %}">
+            <button class="btn">Submit SMS</button>
+        </a>
+    </div>
+
+</div>
+
+<div class="card">
+    <h2>💰 Latest Payments</h2>
+    {% for p in latest_payments %}
+        <p>{{ p.member.name }} - {{ p.amount }} - {{ p.mpesa_reference }}</p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h2>🎫 Latest Tickets</h2>
+    {% for t in latest_tickets %}
+        <p>{{ t.formatted_number }} - {{ t.member.name }}</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

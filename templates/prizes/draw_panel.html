@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Draw Control Panel</title>
+
+    <style>
+        body { font-family: Arial; padding: 20px; }
+
+        .prize {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🎛 Draw Control Panel</h1>
+
+{% for prize in prizes %}
+
+<div class="prize">
+    <h3>{{ prize.name }}</h3>
+    <p>Quantity: {{ prize.quantity }}</p>
+
+    <a href="/prizes/live/{{ prize.id }}/" target="_blank">
+        <button>OPEN LIVE SCREEN</button>
+    </a>
+</div>
+
+{% endfor %}
+
+</body>
+</html>

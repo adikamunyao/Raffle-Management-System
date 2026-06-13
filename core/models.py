@@ -1,0 +1,1 @@
+# core/models.py - no models (app reserved for shared utilities)

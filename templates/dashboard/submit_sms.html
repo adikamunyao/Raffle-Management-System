@@ -1,0 +1,15 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h2>📩 Submit M-Pesa SMS</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn" type="submit">Process SMS</button>
+    </form>
+</div>
+
+{% endblock %}

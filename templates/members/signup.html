@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 40px auto;">
+
+    <div style="text-align:center; margin-bottom: 32px;">
+        <div style="font-size: 52px; margin-bottom: 12px;">🎫</div>
+        <h1 style="font-size: 26px; font-weight: 800; color: var(--primary);">Get Your Raffle Tickets</h1>
+        <p style="color: var(--text-muted); margin-top: 6px;">Register to participate in the draw</p>
+    </div>
+
+    <div class="card">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="e.g. John Kamau"
+                    value="{{ form.name.value|default:'' }}" required>
+                {% if form.name.errors %}
+                    <p style="color: var(--danger); font-size: 12px; margin-top: 4px;">{{ form.name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number (M-Pesa)</label>
+                <input type="text" name="phone_number" placeholder="e.g. 0712345678"
+                    value="{{ form.phone_number.value|default:'' }}" required>
+                {% if form.phone_number.errors %}
+                    <p style="color: var(--danger); font-size: 12px; margin-top: 4px;">{{ form.phone_number.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="alert alert-info" style="margin-top: 4px;">
+                ℹ️ Use the same phone number you will pay with via M-Pesa.
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:12px;">
+                Register & Continue →
+            </button>
+        </form>
+    </div>
+
+    <p style="text-align:center; margin-top: 20px; color: var(--text-muted); font-size: 14px;">
+        Already registered?
+        <a href="{% url 'payment_instructions' %}" style="color: var(--primary); font-weight: 600;">View payment details</a>
+    </p>
+
+</div>
+{% endblock %}
