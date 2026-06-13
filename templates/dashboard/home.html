@@ -1,36 +1,86 @@
-{% extends "dashboard/base.html" %}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 
-<div class="grid">
+<div class="page-header">
+    <h1>📊 Secretary Dashboard</h1>
+    <p>Overview of all payments and tickets</p>
+</div>
+
+<div class="grid-3" style="margin-bottom: 24px;">
+    <div class="stat-card">
+        <div class="stat-label">Total Payments</div>
+        <div class="stat-value">{{ total_payments }}</div>
+    </div>
+    <div class="stat-card accent">
+        <div class="stat-label">Total Tickets Issued</div>
+        <div class="stat-value">{{ total_tickets }}</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-label">Quick Action</div>
+        <div style="margin-top: 10px;">
+            <a href="{% url 'submit_sms' %}" class="btn btn-primary">+ Submit SMS</a>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
 
     <div class="card">
-        <h2>📊 Stats</h2>
-        <p>Total Payments: {{ total_payments }}</p>
-        <p>Total Tickets: {{ total_tickets }}</p>
+        <div class="card-title">💰 Latest Payments</div>
+        {% if latest_payments %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Member</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in latest_payments %}
+                <tr>
+                    <td>{{ p.member.name }}</td>
+                    <td>KSh {{ p.amount }}</td>
+                    <td style="font-family: monospace; font-size:12px;">{{ p.mpesa_reference }}</td>
+                    <td><span class="badge badge-{{ p.status|lower }}">{{ p.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty"><div class="empty-icon">💳</div>No payments yet</div>
+        {% endif %}
     </div>
 
     <div class="card">
-        <h2>⚡ Quick Actions</h2>
-        <a href="{% url 'submit_sms' %}">
-            <button class="btn">Submit SMS</button>
-        </a>
+        <div class="card-title">🎫 Latest Tickets</div>
+        {% if latest_tickets %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Ticket #</th>
+                    <th>Member</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in latest_tickets %}
+                <tr>
+                    <td style="font-weight: 700; color: var(--primary);">#{{ t.formatted_number }}</td>
+                    <td>{{ t.member.name }}</td>
+                    <td><span class="badge badge-{{ t.status|lower }}">{{ t.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty"><div class="empty-icon">🎫</div>No tickets yet</div>
+        {% endif %}
     </div>
 
-</div>
-
-<div class="card">
-    <h2>💰 Latest Payments</h2>
-    {% for p in latest_payments %}
-        <p>{{ p.member.name }} - {{ p.amount }} - {{ p.mpesa_reference }}</p>
-    {% endfor %}
-</div>
-
-<div class="card">
-    <h2>🎫 Latest Tickets</h2>
-    {% for t in latest_tickets %}
-        <p>{{ t.formatted_number }} - {{ t.member.name }}</p>
-    {% endfor %}
 </div>
 
 {% endblock %}
