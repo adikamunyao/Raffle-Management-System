@@ -36,6 +36,13 @@
         </div>
     </div>
 
+    {% if member.wallet_balance > 0 %}
+    <div class="alert alert-info" style="margin-top:24px;">
+        💳 Member wallet balance: <strong>KSh {{ member.wallet_balance }}</strong>
+        This balance can be used for future ticket purchases.
+    </div>
+    {% endif %}
+
     <div style="display:flex; gap:12px; margin-top: 8px;">
         <a href="{% url 'submit_sms' %}" class="btn btn-primary">+ Process Another SMS</a>
         <a href="{% url 'dashboard_home' %}" class="btn btn-outline">← Dashboard</a>

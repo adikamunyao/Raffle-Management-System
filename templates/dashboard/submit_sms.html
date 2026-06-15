@@ -23,10 +23,10 @@
                 <label>Raffle Event</label>
                 <select name="event" required>
                     <option value="">-- Select Active Event --</option>
-                    {% for event in form.event.field.queryset %}
-                        <option value="{{ event.pk }}"
-                            {% if form.event.value|stringformat:"s" == event.pk|stringformat:"s" %}selected{% endif %}>
-                            {{ event.name }} — KSh {{ event.ticket_price }} per ticket
+                    {% for option_event in form.event.field.queryset %}
+                        <option value="{{ option_event.pk }}"
+                            {% if form.event.value|stringformat:"s" == option_event.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ option_event.name }} — KSh {{ option_event.ticket_price }} per ticket
                         </option>
                     {% endfor %}
                 </select>

@@ -51,3 +51,65 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.bank_reference
+
+
+class WalletTransaction(models.Model):
+
+    CREDIT = "CREDIT"
+    DEBIT = "DEBIT"
+
+    TRANSACTION_TYPE_CHOICES = [
+        (CREDIT, "Credit"),
+        (DEBIT, "Debit"),
+    ]
+
+    member = models.ForeignKey(
+        Member,
+        on_delete=models.PROTECT,
+        related_name="wallet_transactions"
+    )
+
+    event = models.ForeignKey(
+        RaffleEvent,
+        on_delete=models.PROTECT,
+        related_name="wallet_transactions",
+        null=True,
+        blank=True
+    )
+
+    payment = models.ForeignKey(
+        Payment,
+        on_delete=models.SET_NULL,
+        related_name="wallet_transactions",
+        null=True,
+        blank=True
+    )
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    transaction_type = models.CharField(
+        max_length=20,
+        choices=TRANSACTION_TYPE_CHOICES,
+    )
+
+    description = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+
+    balance_after = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00")
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.member} {self.transaction_type} {self.amount}"

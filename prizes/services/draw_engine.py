@@ -22,7 +22,7 @@ class DrawEngine:
             event=event
         ).values_list("ticket_id", flat=True)
 
-        eligible_tickets = Ticket.objects.filter(
+        eligible_tickets = Ticket.objects.select_for_update().filter(
             event=event
         ).exclude(id__in=used_ticket_ids)
 

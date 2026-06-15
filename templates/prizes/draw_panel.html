@@ -30,10 +30,19 @@
         <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">{{ prize.description }}</p>
         {% endif %}
 
-        <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+        <div style="display:flex; gap: 10px; flex-wrap: wrap; align-items:center;">
             <a href="{% url 'prizes:live_draw_screen' prize.id %}" target="_blank" class="btn btn-primary">
                 🖥️ Open Live Screen
             </a>
+            <form action="{% url 'prizes:draw_prize' prize.id %}" method="post" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">
+                    🎯 Draw Winner
+                </button>
+            </form>
+            {% if prize.winners.count >= prize.quantity %}
+            <span style="font-size: 13px; color: var(--text-muted);">All winners drawn</span>
+            {% endif %}
         </div>
 
         {% if prize.winners.exists %}

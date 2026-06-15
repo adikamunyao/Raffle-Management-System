@@ -1,125 +1,225 @@
 {% extends "base.html" %}
-{% block title %}Welcome{% endblock %}
+{% block title %}KAG Clayworks Youth Day Sunday Raffle{% endblock %}
 
 {% block content %}
 
+<style>
+    @keyframes float-icon {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-8px) rotate(-4deg); }
+    }
+    @keyframes shine-sweep {
+        0% { transform: translateX(-120%) rotate(8deg); }
+        100% { transform: translateX(220%) rotate(8deg); }
+    }
+    @keyframes pulse-ring {
+        0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
+        70% { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    .prize-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 14px;
+        padding: 28px 18px 22px;
+        text-align: center;
+        color: #fff;
+        isolation: isolate;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .prize-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    }
+    .prize-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 60%);
+        pointer-events: none;
+    }
+    .prize-card::after {
+        content: "";
+        position: absolute;
+        top: -50%; left: -60%;
+        width: 50%; height: 220%;
+        background: rgba(255,255,255,0.16);
+        transform: translateX(-120%) rotate(8deg);
+        animation: shine-sweep 4.5s ease-in-out infinite;
+        pointer-events: none;
+    }
+    .prize-card--gold   { background: linear-gradient(135deg, #f7b733, #c9971f); }
+    .prize-card--silver { background: linear-gradient(135deg, #94a3b8, #5b6b85); }
+    .prize-card--bronze { background: linear-gradient(135deg, #d98a4d, #a35a2a); }
+    .prize-icon-wrap {
+        width: 76px; height: 76px;
+        margin: 0 auto 14px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 36px;
+        background: rgba(255,255,255,0.18);
+        animation: float-icon 3.5s ease-in-out infinite, pulse-ring 3s ease-out infinite;
+    }
+    .prize-rank-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.22);
+        margin-bottom: 10px;
+    }
+    .prize-name {
+        font-size: 19px;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+    .prize-sub {
+        font-size: 13px;
+        opacity: 0.9;
+    }
+</style>
+
 <!-- HERO -->
-<div style="text-align:center; padding: 56px 20px 40px; max-width: 680px; margin: 0 auto;">
-    <div style="display:inline-flex; align-items:center; justify-content:center;
-                width:80px; height:80px; background:var(--primary); border-radius:20px;
-                font-size:38px; margin-bottom:20px; box-shadow: 0 8px 24px rgba(26,58,92,0.3);">
-        ✝️
+<div class="card" style="margin-bottom:24px; text-align:center; padding:36px 28px;">
+    <div class="badge" style="margin-bottom:18px; display:inline-flex;">Worship · Grow · Become</div>
+    <h1 style="font-size: clamp(32px, 4vw, 42px); margin-bottom:12px;">🎉 Win Amazing Prizes While Supporting KAG Clayworks Youth Ministry</h1>
+    <p style="max-width: 720px; margin: 0 auto 8px; font-weight:700; color: var(--primary); font-size:15px; letter-spacing:0.3px;">WHERE EVERY SOUL MATTERS</p>
+    <p style="max-width: 720px; margin: 0 auto 24px; color: var(--text-muted); line-height:1.8;">Every KSh 500 ticket helps fund discipleship, outreach, and activities for our young people — and gives you a shot at winning a Smart TV, a gas cooker, or a brand-new phone.</p>
+
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:28px;">
+        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">🎟️ Buy Your Ticket — KSh {{ ticket_price|default:500 }}</a>
+        <a href="{% url 'payment_instructions' %}" class="btn btn-outline btn-lg">How to Pay</a>
     </div>
-    <h1 style="font-size:clamp(28px,5vw,40px); font-weight:900; color:var(--primary); line-height:1.15; margin-bottom:12px;">
-        KAG Clay Works<br>
-        <span style="color:var(--accent);">Raffle Draw {% if event %}— {{ event.name }}{% endif %}</span>
-    </h1>
-    <p style="font-size:16px; color:var(--text-muted); line-height:1.7; margin-bottom:32px;">
-        Support the Youth Day by purchasing raffle tickets.
-        Pay via M-Pesa Paybill, submit your SMS, and choose your lucky number.
-        Winners will be drawn on
-        <strong>{% if event %}{{ event.draw_date }}{% else %}a date to be announced{% endif %}</strong>.
-    </p>
-    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">
-            🎫 Register &amp; Get Tickets
-        </a>
-        <a href="{% url 'payment_instructions' %}" class="btn btn-outline btn-lg">
-            💳 How to Pay
-        </a>
+
+    <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; margin-bottom:{% if ticket_goal %}20px{% else %}0{% endif %};">
+        <div class="stat-card"><div class="stat-icon">🎟️</div><div><div class="stat-label">Ticket Price</div><div class="stat-value">KSh {{ ticket_price|default:500 }}</div></div></div>
+        <div class="stat-card"><div class="stat-icon">📅</div><div><div class="stat-label">Draw Date</div><div class="stat-value">{% if event %}{{ event.draw_date|date:'F j, Y' }}{% else %}TBA{% endif %}</div></div></div>
+        <div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-label">Tickets Sold</div><div class="stat-value">{{ active_event_tickets_sold|default:0 }}</div></div></div>
     </div>
+
+    {% if ticket_goal %}
+    <div style="max-width:560px; margin:0 auto; text-align:left;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:6px;">
+            <span>{{ active_event_tickets_sold|default:0 }} tickets sold</span>
+            <span>Goal: {{ ticket_goal }}</span>
+        </div>
+        <div style="background:var(--border); border-radius:999px; height:10px; overflow:hidden;">
+            <div style="background:var(--primary); height:100%; width:{{ ticket_progress_percent|default:0 }}%; border-radius:999px;"></div>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Every ticket gets us closer to fully funding this year's youth programs 🙌</div>
+    </div>
+    {% endif %}
 </div>
 
-<!-- STATS STRIP -->
-{% if event %}
-<div class="grid-3" style="margin-bottom:32px;">
-    <div class="stat-card">
-        <div class="stat-icon">🎟️</div>
-        <div>
-            <div class="stat-label">Ticket Price</div>
-            <div class="stat-value">KSh {{ event.ticket_price|floatformat:0 }}</div>
+<!-- PRIZES -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-title">15+ Winners Will Be Selected 🎁</div>
+    <p style="color: var(--text-muted); margin-top:-8px; margin-bottom:18px;">The more tickets we sell, the more prizes we add — so spread the word!</p>
+    <div class="grid-3" style="gap:16px;">
+        <div class="prize-card prize-card--gold">
+            <span class="prize-rank-badge">🏆 Grand Prize</span>
+            <div class="prize-icon-wrap">📺</div>
+            <div class="prize-name">Smart TV</div>
+            <div class="prize-sub">The big one — light up movie nights</div>
+        </div>
+        <div class="prize-card prize-card--silver">
+            <span class="prize-rank-badge">🥈 Second Prize</span>
+            <div class="prize-icon-wrap">🔥</div>
+            <div class="prize-name">2-Burner Gas Cooker</div>
+            <div class="prize-sub">Cook up something delicious</div>
+        </div>
+        <div class="prize-card prize-card--bronze">
+            <span class="prize-rank-badge">🥉 Third Prize</span>
+            <div class="prize-icon-wrap">📱</div>
+            <div class="prize-name">Mobile Phone</div>
+            <div class="prize-sub">Stay connected in style</div>
         </div>
     </div>
-    <div class="stat-card accent">
-        <div class="stat-icon">📅</div>
-        <div>
-            <div class="stat-label">Draw Date</div>
-            <div class="stat-value" style="font-size:18px;">{{ event.draw_date }}</div>
-        </div>
-    </div>
-    <div class="stat-card success">
-        <div class="stat-icon">👥</div>
-        <div>
-            <div class="stat-label">Participants</div>
-            <div class="stat-value">{{ total_members }}</div>
-        </div>
+    <div style="margin-top:16px; padding:14px 16px; background: var(--surface-muted, rgba(0,0,0,0.03)); border-radius:10px; font-size:14px; color: var(--text-muted);">
+        ➕ <strong>12 more prizes</strong> including vouchers, hampers, and surprise gifts will be revealed closer to draw day. The more tickets sold, the bigger the prize table gets!
     </div>
 </div>
-{% endif %}
 
 <!-- HOW IT WORKS -->
 <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">⚡ How It Works</div>
-    <div class="grid-3" style="gap:24px;">
-
-        <div style="text-align:center; padding:8px;">
-            <div style="font-size:36px; margin-bottom:10px;">📱</div>
-            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">1. Pay via M-Pesa</div>
-            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
-                Send <strong>KSh {{ event.ticket_price|default:"500" }}</strong> per ticket to Paybill
-                <strong>400222</strong>, Account <strong>1171076#RaffleDraw</strong>
-            </p>
+    <div class="card-title">How It Works</div>
+    <div class="grid-3" style="gap:16px;">
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:28px; margin-bottom:10px;">1️⃣</div>
+            <div style="font-weight:700; margin-bottom:6px;">Pay KSh {{ ticket_price|default:500 }}</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Send your ticket payment via CoopBank to the official church paybill/account.</div>
         </div>
-
-        <div style="text-align:center; padding:8px;">
-            <div style="font-size:36px; margin-bottom:10px;">📩</div>
-            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">2. Submit Your SMS</div>
-            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
-                Register below and paste your CoopBank confirmation SMS into the system — or forward it to the Youth Secretary.
-            </p>
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:28px; margin-bottom:10px;">2️⃣</div>
+            <div style="font-weight:700; margin-bottom:6px;">Submit Confirmation</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Paste your CoopBank confirmation SMS to verify your payment.</div>
         </div>
-
-        <div style="text-align:center; padding:8px;">
-            <div style="font-size:36px; margin-bottom:10px;">🎯</div>
-            <div style="font-weight:700; color:var(--primary); margin-bottom:6px;">3. Pick Your Number</div>
-            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
-                Choose your preferred ticket number from those still available and download your ticket PDF.
-            </p>
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:28px; margin-bottom:10px;">3️⃣</div>
+            <div style="font-weight:700; margin-bottom:6px;">Pick Your Number</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Choose your lucky ticket number and you're entered into the draw!</div>
         </div>
-
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{% url 'member_signup' %}" class="btn btn-primary">Get Started</a>
     </div>
 </div>
 
-<!-- SAMPLE SMS -->
+<!-- IMPACT: WORSHIP, GROW, BECOME -->
 <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">📋 Sample CoopBank Confirmation SMS</div>
-    <div style="background:#0d1117; color:#7ee787; border-radius:10px; padding:18px;
-                font-family:'Courier New',monospace; font-size:13px; line-height:1.9;">
-        <span style="color:#8b949e; font-size:11px;">Expected format:</span><br>
-        Dear JOHN KAMAU, you have sent Ksh. 500.0 to K.A.G CLAYWORKS CHURCH for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.
+    <div class="card-title">Worship. Grow. Become.</div>
+    <p style="color: var(--text-muted); margin-top:-8px; margin-bottom:18px;">Here's what your ticket helps make possible:</p>
+    <div class="grid-3" style="gap:16px;">
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:24px; margin-bottom:10px;">🙏</div>
+            <div style="font-weight:700; margin-bottom:6px;">Worship</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Strengthening praise and prayer in every youth gathering.</div>
+        </div>
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:24px; margin-bottom:10px;">🌱</div>
+            <div style="font-weight:700; margin-bottom:6px;">Grow</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Supporting growth in faith, leadership, and community service.</div>
+        </div>
+        <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
+            <div style="font-size:24px; margin-bottom:10px;">💫</div>
+            <div style="font-weight:700; margin-bottom:6px;">Become</div>
+            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Helping young people become confident, compassionate leaders.</div>
+        </div>
     </div>
-    <p style="color:var(--text-muted); font-size:13px; margin-top:12px;">
-        ⚠️ Paste the SMS exactly as received — do not edit or shorten it.
-    </p>
 </div>
 
-<!-- BOTTOM CTA -->
-<div style="text-align:center; padding: 16px 0 8px;">
-    <p style="color:var(--text-muted); font-size:14px; margin-bottom:16px;">
-        Already paid? Submit your SMS and choose your ticket number now.
-    </p>
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">
-            🎫 Register Now
-        </a>
-        <a href="{% url 'submit_payment' %}" class="btn btn-accent btn-lg">
-            📩 Already Registered? Submit SMS
-        </a>
+<!-- FAQ -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-title">Frequently Asked Questions</div>
+    <div style="display:grid; gap:10px;">
+        <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+            <summary style="font-weight:700; cursor:pointer;">How do I pay for my ticket?</summary>
+            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">Pay KSh {{ ticket_price|default:500 }} via CoopBank to the official details on the <a href="{% url 'payment_instructions' %}">payment instructions page</a>, then submit your confirmation SMS when registering.</div>
+        </details>
+        <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+            <summary style="font-weight:700; cursor:pointer;">When and how will the draw take place?</summary>
+            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">The draw takes place on {% if event %}{{ event.draw_date|date:'F j, Y' }}{% else %}the announced date{% endif %} during the Youth Day Sunday service. Winners will be selected live and announced to the congregation.</div>
+        </details>
+        <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+            <summary style="font-weight:700; cursor:pointer;">Can I buy more than one ticket?</summary>
+            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">Yes! Each additional ticket increases your chance of winning and your support for the youth ministry's work.</div>
+        </details>
+        <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
+            <summary style="font-weight:700; cursor:pointer;">Where do the proceeds go?</summary>
+            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">All proceeds go directly toward KAG Clayworks Youth Ministry programs — discipleship materials, outreach events, camps, and Royal Rangers activities.</div>
+        </details>
     </div>
-    <p style="margin-top:24px; color:var(--text-muted); font-size:13px;">
-        Officials
-        <a href="{% url 'login' %}" style="color:var(--primary); font-weight:600;">Staff Login →</a>
-    </p>
+</div>
+
+<!-- FINAL CTA -->
+<div class="card" style="text-align:center; padding:40px 28px;">
+    <div class="badge" style="margin-bottom:18px; display:inline-flex;">Worship · Grow · Become</div>
+    <h2 style="font-size: clamp(26px, 4vw, 34px); margin-bottom:12px;">Support The Youth. Win Big. Make An Impact.</h2>
+    <p style="max-width: 600px; margin: 0 auto 24px; color: var(--text-muted); line-height:1.8;">Where Every Soul Matters — including yours. Get your ticket today and stand a chance to win.</p>
+    <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">🎟️ Purchase Your Raffle Ticket</a>
 </div>
 
 {% endblock %}

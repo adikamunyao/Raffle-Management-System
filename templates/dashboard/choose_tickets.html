@@ -39,6 +39,7 @@
         {% csrf_token %}
         <input type="hidden" name="sms_text"     value="{{ sms_text }}">
         <input type="hidden" name="phone_number" value="{{ phone_number }}">
+        <input type="hidden" name="event"        value="{{ event.id }}">
         <input type="hidden" name="confirm"      value="1">
 
         <div class="card">

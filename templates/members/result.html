@@ -43,6 +43,13 @@
             You can download and print them below.
         </div>
 
+        {% if member.wallet_balance > 0 %}
+        <div class="alert alert-info" style="margin-top:16px;">
+            💳 Your account has a remaining wallet balance of <strong>KSh {{ member.wallet_balance }}</strong>.
+            This credit is available for future ticket purchases.
+        </div>
+        {% endif %}
+
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
             <a href="{% url 'download_tickets_pdf' payment.id %}"
                class="btn btn-primary btn-lg">

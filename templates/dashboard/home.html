@@ -33,8 +33,46 @@
     <div class="stat-card warning" style="border-left-color:var(--primary);">
         <div class="stat-icon">📩</div>
         <div>
-            <div class="stat-label">Quick Action</div>
-            <a href="{% url 'submit_sms' %}" class="btn btn-primary btn-sm" style="margin-top:8px;">Submit SMS</a>
+            <div class="stat-label">Quick Actions</div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+                <a href="{% url 'submit_sms' %}" class="btn btn-primary btn-sm">Submit SMS</a>
+                {% if active_event %}
+                <a href="{% url 'prizes:draw_panel' active_event.id %}" class="btn btn-success btn-sm">Open Draw Panel</a>
+                {% else %}
+                <span class="btn btn-outline btn-sm" style="opacity:.7; cursor:default;">No active event</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-4" style="margin-bottom:24px; gap:16px;">
+    <div class="stat-card">
+        <div class="stat-icon">💵</div>
+        <div>
+            <div class="stat-label">Verified Revenue</div>
+            <div class="stat-value">KSh {{ total_revenue }}</div>
+        </div>
+    </div>
+    <div class="stat-card accent">
+        <div class="stat-icon">🔋</div>
+        <div>
+            <div class="stat-label">Wallet Credit</div>
+            <div class="stat-value">KSh {{ total_wallet_balance }}</div>
+        </div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-icon">🏆</div>
+        <div>
+            <div class="stat-label">Winners Drawn</div>
+            <div class="stat-value">{{ total_winners }}</div>
+        </div>
+    </div>
+    <div class="stat-card warning" style="border-left-color:var(--primary);">
+        <div class="stat-icon">🎟️</div>
+        <div>
+            <div class="stat-label">Tickets Remaining</div>
+            <div class="stat-value">{{ tickets_remaining }}</div>
         </div>
     </div>
 </div>
@@ -59,7 +97,7 @@
                     <tr>
                         <td style="font-weight:600;">{{ p.member.name }}</td>
                         <td>KSh {{ p.amount }}</td>
-                        <td style="font-family:monospace; font-size:12px; color:var(--text-muted);">{{ p.mpesa_reference }}</td>
+                        <td style="font-family:monospace; font-size:12px; color:var(--text-muted);">{{ p.bank_reference }}</td>
                         <td><span class="badge badge-{{ p.status|lower }}">{{ p.status }}</span></td>
                     </tr>
                     {% endfor %}

@@ -10,6 +10,7 @@ from .services.draw_engine import DrawEngine
 
 
 @login_required
+@require_POST
 def draw_prize(request, prize_id):
 
     prize = get_object_or_404(Prize, pk=prize_id)
@@ -20,7 +21,7 @@ def draw_prize(request, prize_id):
     except Exception as e:
         messages.error(request, str(e))
 
-    return redirect("draw_panel", event_id=prize.event_id)
+    return redirect("prizes:draw_panel", event_id=prize.event_id)
 
 
 @login_required

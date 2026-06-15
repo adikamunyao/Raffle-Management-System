@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "prizes",
     "events",
     "dashboard",
+    # "django_daraja",
 ]
 
 MIDDLEWARE = [
