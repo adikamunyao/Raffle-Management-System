@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 {% block title %}Payment Instructions{% endblock %}
 
@@ -5,15 +6,15 @@
 
 {% if request.session.member_name %}
 <div class="alert alert-success">
-    ✅ Welcome, <strong>{{ request.session.member_name }}</strong>! Follow the steps below to complete your payment.
+    ✅ Welcome, <strong>{{ request.session.member_name }}</strong>! Follow the steps below to complete your payment and receive your raffle ticket(s).
 </div>
 {% endif %}
 
 <div style="max-width:660px; margin:0 auto;">
 
     <div class="page-header" style="text-align:center;">
-        <h1>💳 How to Buy Raffle Tickets</h1>
-        <p>Follow these steps to pay and get your tickets</p>
+        <h1>🎟️ Youth Day 2026 Raffle Draw</h1>
+        <p>Follow the simple steps below to purchase your raffle ticket(s).</p>
     </div>
 
     <!-- STEP 1 -->
@@ -23,9 +24,10 @@
                         width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
                         justify-content:center;flex-shrink:0;">1</div>
             <div>
-                <div class="card-title" style="margin-bottom:10px;">Open M-Pesa on your phone</div>
+                <div class="card-title" style="margin-bottom:10px;">Open M-Pesa on Your Phone</div>
                 <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">
-                    Go to <strong>M-Pesa</strong> → <strong>Send Money</strong> or <strong>Lipa na M-Pesa → Pay Bill</strong>
+                    Open <strong>M-Pesa</strong> and select
+                    <strong>Lipa na M-Pesa → Pay Bill</strong>.
                 </p>
             </div>
         </div>
@@ -37,27 +39,47 @@
             <div style="background:var(--primary);color:white;font-size:18px;font-weight:900;
                         width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
                         justify-content:center;flex-shrink:0;">2</div>
+
             <div style="width:100%;">
-                <div class="card-title" style="margin-bottom:14px;">Send payment to KAG Clay Works</div>
+                <div class="card-title" style="margin-bottom:14px;">
+                    Make Your Payment
+                </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+
                     <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;">
                         <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
-                                    color:var(--text-muted);margin-bottom:6px;">Paybill Number</div>
-                        <div style="font-size:28px;font-weight:900;color:var(--primary);letter-spacing:2px;">400222</div>
+                                    color:var(--text-muted);margin-bottom:6px;">
+                            Paybill Number
+                        </div>
+
+                        <div style="font-size:28px;font-weight:900;color:var(--primary);letter-spacing:2px;">
+                            400222
+                        </div>
                     </div>
+
                     <div style="background:var(--bg);border-radius:10px;padding:16px;text-align:center;">
                         <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
-                                    color:var(--text-muted);margin-bottom:6px;">Account Number</div>
-                        <div style="font-size:18px;font-weight:900;color:var(--primary);">1171076#RaffleDraw</div>
+                                    color:var(--text-muted);margin-bottom:6px;">
+                            Account Number
+                        </div>
+
+                        <div style="font-size:18px;font-weight:900;color:var(--primary);">
+                            1171076#RaffleDraw
+                        </div>
                     </div>
+
                 </div>
 
                 {% if event %}
                 <div class="alert alert-info">
-                    ℹ️ <strong>1 ticket = KSh {{ event.ticket_price }}.</strong>
-                    Pay multiples of {{ event.ticket_price }} for more tickets.
-                    e.g. KSh {{ event.ticket_price|floatformat:0|add:"0" }} × 2 = 2 tickets.
+                    🎟️ <strong>1 Ticket = KSh {{ event.ticket_price }}</strong><br>
+                    Purchase multiple tickets by paying multiples of the ticket price.
+
+                    <div style="margin-top:8px;">
+                        Example:
+                        KSh {{ event.ticket_price|floatformat:0 }} × 2 = 2 Tickets
+                    </div>
                 </div>
                 {% endif %}
             </div>
@@ -70,21 +92,33 @@
             <div style="background:var(--success);color:white;font-size:18px;font-weight:900;
                         width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
                         justify-content:center;flex-shrink:0;">3</div>
+
             <div style="width:100%;">
-                <div class="card-title" style="margin-bottom:10px;">Paste your confirmation SMS into the system</div>
+                <div class="card-title" style="margin-bottom:10px;">
+                    Submit Your Payment Confirmation
+                </div>
+
                 <p style="color:var(--text-muted);font-size:14px;line-height:1.7;margin-bottom:14px;">
-                    After paying, you will receive a confirmation SMS from CoopBank/M-Pesa.
-                    Click <strong>"Submit Payment"</strong> below and paste the full message exactly as received.
+                    After making payment, you will receive a confirmation SMS from
+                    M-Pesa / Co-op Bank.
+
+                    Click <strong>"Submit Payment"</strong> below and paste the
+                    entire SMS exactly as received.
                 </p>
 
                 <div style="background:#0d1117;color:#7ee787;border-radius:10px;padding:16px;
                             font-family:'Courier New',monospace;font-size:12.5px;line-height:1.9;">
-                    <div style="color:#8b949e;font-size:11px;margin-bottom:6px;">📱 Example SMS:</div>
-                    Dear EMMANUEL ADIKA, you have sent Ksh. 500.0 to K.A.G CLAYWORKS CHURCH for raffleDraw on 06/13/2026 at 13:15:14. MPESA Ref. UFDN77PY5D.
+                    <div style="color:#8b949e;font-size:11px;margin-bottom:6px;">
+                        📱 Example SMS
+                    </div>
+
+                    Dear JOHN DOE, you have sent Ksh. 500.00 to K.A.G CLAYWORKS CHURCH
+                    for raffleDraw on 13/06/2026 at 13:15:14.
+                    MPESA Ref. UFDN77PY5D.
                 </div>
 
                 <div class="alert alert-warning" style="margin-top:14px;">
-                    ⚠️ If you don't have internet access, forward the SMS to the Youth Secretary who will submit it on your behalf.
+                    ⚠️ Please paste the complete message without editing any part of it.
                 </div>
             </div>
         </div>
@@ -96,19 +130,65 @@
             <div style="background:#7c3aed;color:white;font-size:18px;font-weight:900;
                         width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
                         justify-content:center;flex-shrink:0;">4</div>
+
             <div>
-                <div class="card-title" style="margin-bottom:10px;">Choose your ticket number & download</div>
+                <div class="card-title" style="margin-bottom:10px;">
+                    Choose Your Ticket Number
+                </div>
+
                 <p style="color:var(--text-muted);font-size:14px;line-height:1.7;">
-                    The system will verify your payment and let you pick your preferred ticket number(s) from those still available. You can then download and print your ticket PDF.
+                    Once your payment is verified, you will be able to select your
+                    preferred ticket number(s) from those still available.
+
+                    After selecting your number(s), you can download and print your
+                    raffle ticket PDF.
                 </p>
             </div>
         </div>
     </div>
 
+    <!-- HELP SECTION -->
+    <div class="card">
+        <div class="card-title" style="margin-bottom:10px;">
+            📞 Need Help?
+        </div>
+
+        <p style="color:var(--text-muted);line-height:1.7;">
+            If you experience any difficulties with payment, SMS submission,
+            verification, or ticket selection, please contact the Youth Secretariat.
+        </p>
+
+        <div style="background:var(--bg);padding:16px;border-radius:10px;text-align:center;margin-top:12px;">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;">
+                WhatsApp • SMS • Call
+            </div>
+
+            <div style="font-size:22px;font-weight:800;color:var(--primary);">
+                <a href="tel:+254715550805"
+                   style="color:inherit;text-decoration:none;">
+                    +254 715 550 805
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER MESSAGE -->
+    <div class="alert alert-success">
+        🎉 Thank you for supporting the KAG Clayworks Youth Ministry through the
+        Youth Day 2026 Raffle Draw. We wish you the very best!
+    </div>
+
     <div style="text-align:center;margin-top:8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <a href="{% url 'submit_payment' %}" class="btn btn-primary btn-lg">📩 Submit Payment SMS →</a>
-        <a href="{% url 'member_signup' %}" class="btn btn-outline">← Register Another Person</a>
+        <a href="{% url 'submit_payment' %}" class="btn btn-primary btn-lg">
+            📩 Submit Payment & Get Tickets →
+        </a>
+
+        <a href="{% url 'member_signup' %}" class="btn btn-outline">
+            ← Register Another Person
+        </a>
     </div>
 
 </div>
+
 {% endblock %}
+```

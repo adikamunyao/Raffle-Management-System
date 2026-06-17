@@ -8,6 +8,7 @@ from tickets.models import Ticket
 from members.models import Member
 from events.models import RaffleEvent
 from prizes.models import Winner
+from dashboard.models import LandingPageContent
 from dashboard.forms import SMSForm
 from payments.services.sms_parser import CoopBankSMSParser, SMSParserError
 from payments.services.sms_processor import SMSProcessor
@@ -18,6 +19,7 @@ def landing(request):
     if request.user.is_authenticated:
         from django.shortcuts import redirect
         return redirect("dashboard_home")
+    content, _ = LandingPageContent.objects.get_or_create(pk=1)
     event = RaffleEvent.objects.filter(status=RaffleEvent.ACTIVE).first()
     total_tickets = Ticket.objects.count()
     total_members = Member.objects.count()
@@ -33,6 +35,7 @@ def landing(request):
     ticket_price = event.ticket_price if event and event.ticket_price is not None else 500
     draw_date_iso = event.draw_date.isoformat() if event and event.draw_date else ""
     return render(request, "landing.html", {
+        "content":                 content,
         "event":                    event,
         "total_tickets":            total_tickets,
         "total_members":            total_members,

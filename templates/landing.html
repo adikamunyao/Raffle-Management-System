@@ -3,164 +3,115 @@
 
 {% block content %}
 
-<style>
-    @keyframes float-icon {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-8px) rotate(-4deg); }
-    }
-    @keyframes shine-sweep {
-        0% { transform: translateX(-120%) rotate(8deg); }
-        100% { transform: translateX(220%) rotate(8deg); }
-    }
-    @keyframes pulse-ring {
-        0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); }
-        70% { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
-        100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-    }
-    .prize-card {
-        position: relative;
-        overflow: hidden;
-        border-radius: 14px;
-        padding: 28px 18px 22px;
-        text-align: center;
-        color: #fff;
-        isolation: isolate;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .prize-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-    }
-    .prize-card::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 60%);
-        pointer-events: none;
-    }
-    .prize-card::after {
-        content: "";
-        position: absolute;
-        top: -50%; left: -60%;
-        width: 50%; height: 220%;
-        background: rgba(255,255,255,0.16);
-        transform: translateX(-120%) rotate(8deg);
-        animation: shine-sweep 4.5s ease-in-out infinite;
-        pointer-events: none;
-    }
-    .prize-card--gold   { background: linear-gradient(135deg, #f7b733, #c9971f); }
-    .prize-card--silver { background: linear-gradient(135deg, #94a3b8, #5b6b85); }
-    .prize-card--bronze { background: linear-gradient(135deg, #d98a4d, #a35a2a); }
-    .prize-icon-wrap {
-        width: 76px; height: 76px;
-        margin: 0 auto 14px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 36px;
-        background: rgba(255,255,255,0.18);
-        animation: float-icon 3.5s ease-in-out infinite, pulse-ring 3s ease-out infinite;
-    }
-    .prize-rank-badge {
-        display: inline-block;
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-        padding: 4px 12px;
-        border-radius: 999px;
-        background: rgba(255,255,255,0.22);
-        margin-bottom: 10px;
-    }
-    .prize-name {
-        font-size: 19px;
-        font-weight: 800;
-        margin-bottom: 4px;
-    }
-    .prize-sub {
-        font-size: 13px;
-        opacity: 0.9;
-    }
-</style>
+<div class="card" style="margin-bottom:24px; text-align:center; padding:40px 28px;">
+    <div class="badge" style="margin-bottom:18px; display:inline-flex;">{{ content.site_badge }}</div>
 
-<!-- HERO -->
-<div class="card" style="margin-bottom:24px; text-align:center; padding:36px 28px;">
-    <div class="badge" style="margin-bottom:18px; display:inline-flex;">Worship · Grow · Become</div>
-    <h1 style="font-size: clamp(32px, 4vw, 42px); margin-bottom:12px;">Win Amazing Prizes While Supporting KAG Clayworks Youth Ministry</h1>
-    <p style="max-width: 720px; margin: 0 auto 8px; font-weight:700; color: var(--primary); font-size:15px; letter-spacing:0.3px;">WHERE EVERY SOUL MATTERS</p>
-    <p style="max-width: 720px; margin: 0 auto 24px; color: var(--text-muted); line-height:1.8;">Every KSh 500 ticket helps support the Youth Ministry, and gives you a shot at winning a Smart TV, a gas cooker, or a brand-new phone.</p>
+    <h1 style="font-size: clamp(34px, 4vw, 46px); margin-bottom:14px;">{{ content.hero_title }}</h1>
 
-    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:28px;">
-        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">🎟️ Buy Your Ticket — KSh {{ ticket_price|default:500 }}</a>
-        <a href="{% url 'payment_instructions' %}" class="btn btn-outline btn-lg">How to Pay</a>
+    <p style="max-width:760px; margin:0 auto 12px; font-weight:700; color:var(--primary); font-size:15px;">{{ content.hero_tagline }}</p>
+
+    <p style="max-width:760px; margin:0 auto 24px; color:var(--text-muted); line-height:1.9;">{{ content.hero_description }}</p>
+
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:22px;">
+        <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">🎟️ {{ content.primary_cta_text }}</a>
+        <a href="{% url 'payment_instructions' %}" class="btn btn-outline btn-lg">📖 {{ content.secondary_cta_text }}</a>
     </div>
 
-    <div style="display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; margin-bottom:{% if ticket_goal %}20px{% else %}0{% endif %};">
-        <div class="stat-card"><div class="stat-icon">🎟️</div><div><div class="stat-label">Ticket Price</div><div class="stat-value">KSh {{ ticket_price|default:500 }}</div></div></div>
-        <div class="stat-card"><div class="stat-icon">📅</div><div><div class="stat-label">Draw Date</div><div class="stat-value">{% if event %}{{ event.draw_date|date:'F j, Y' }}{% else %}TBA{% endif %}</div></div></div>
-        <div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-label">Tickets Sold</div><div class="stat-value">{{ active_event_tickets_sold|default:0 }}</div></div></div>
+    <div style="background:var(--bg); border-radius:12px; padding:14px; margin-bottom:22px;">
+        <strong>📢 {{ content.hero_callout }}</strong>
     </div>
 
-    {% if ticket_goal %}
-    <div style="max-width:560px; margin:0 auto; text-align:left;">
+    <div class="grid-3" style="gap:14px;">
+        <div class="stat-card">
+            <div class="stat-icon">🎟️</div>
+            <div>
+                <div class="stat-label">Ticket Price</div>
+                <div class="stat-value">{{ content.ticket_price_note }}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div>
+                <div class="stat-label">Draw Date</div>
+                <div class="stat-value">{% if event %}{{ event.draw_date|date:'F j, Y' }}{% else %}TBA{% endif %}</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div>
+                <div class="stat-label">Tickets Sold</div>
+                <div class="stat-value">{{ active_event_tickets_sold|default:0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width:560px; margin:18px auto 0; text-align:left;">
         <div style="display:flex; justify-content:space-between; font-size:13px; color:var(--text-muted); margin-bottom:6px;">
-            <span>{{ active_event_tickets_sold|default:0 }} tickets sold</span>
-            <span>Goal: {{ ticket_goal }}</span>
+            <span>{{ active_event_tickets_sold|default:0 }} sold</span>
+            <span>{{ tickets_remaining|default:0 }} remaining</span>
         </div>
         <div style="background:var(--border); border-radius:999px; height:10px; overflow:hidden;">
-            <div style="background:var(--primary); height:100%; width:{{ ticket_progress_percent|default:0 }}%; border-radius:999px;"></div>
+            <div style="background:var(--primary); height:100%; width:{{ progress_percent|default:0 }}%; border-radius:999px;"></div>
         </div>
-        <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Every ticket gets us closer to fully funding this year's youth programs 🙌</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">{{ content.ticket_goal_note }}</div>
     </div>
-    {% endif %}
 </div>
 
-<!-- PRIZES -->
 <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">15+ Winners Will Be Selected 🎁</div>
-    <p style="color: var(--text-muted); margin-top:-8px; margin-bottom:18px;">The more tickets we sell, the more prizes we add — so spread the word!</p>
+    <div class="card-title">{{ content.prize_section_title }} 🎁</div>
+    <p style="color: var(--text-muted); margin-top:-8px; margin-bottom:18px;">{{ content.prize_section_note }}</p>
     <div class="grid-3" style="gap:16px;">
-        <div class="prize-card prize-card--gold">
-            <span class="prize-rank-badge">🏆 Grand Prize</span>
-            <div class="prize-icon-wrap">📺</div>
-            <div class="prize-name">Smart TV</div>
-            <div class="prize-sub">The big one — light up movie nights</div>
+        <div class="card" style="padding:0; box-shadow:none; border:1px solid var(--border); overflow:hidden; margin-bottom:0;">
+            <img src="{{ content.grand_prize_image_url|default:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=900&q=80' }}" alt="{{ content.grand_prize_name }}" style="width:100%; height:200px; object-fit:cover; display:block;">
+            <div style="padding:18px; text-align:center;">
+                <div class="badge" style="margin-bottom:10px;">{{ content.grand_prize_label }}</div>
+                <div style="font-size:30px; margin-bottom:10px;">{{ content.grand_prize_icon }}</div>
+                <div style="font-weight:800; margin-bottom:6px; font-size:18px; color:var(--primary);">{{ content.grand_prize_name }}</div>
+                <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.grand_prize_description }}</div>
+            </div>
         </div>
-        <div class="prize-card prize-card--silver">
-            <span class="prize-rank-badge">🥈 Second Prize</span>
-            <div class="prize-icon-wrap">🔥</div>
-            <div class="prize-name">2-Burner Gas Cooker</div>
-            <div class="prize-sub">Cook up something delicious</div>
+
+        <div class="card" style="padding:0; box-shadow:none; border:1px solid var(--border); overflow:hidden; margin-bottom:0;">
+            <img src="{{ content.second_prize_image_url|default:'https://images.unsplash.com/photo-1512428559087-a557246a3d59?auto=format&fit=crop&w=900&q=80' }}" alt="{{ content.second_prize_name }}" style="width:100%; height:200px; object-fit:cover; display:block;">
+            <div style="padding:18px; text-align:center;">
+                <div class="badge" style="margin-bottom:10px;">{{ content.second_prize_label }}</div>
+                <div style="font-size:30px; margin-bottom:10px;">{{ content.second_prize_icon }}</div>
+                <div style="font-weight:800; margin-bottom:6px; font-size:18px; color:var(--primary);">{{ content.second_prize_name }}</div>
+                <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.second_prize_description }}</div>
+            </div>
         </div>
-        <div class="prize-card prize-card--bronze">
-            <span class="prize-rank-badge">🥉 Third Prize</span>
-            <div class="prize-icon-wrap">📱</div>
-            <div class="prize-name">Mobile Phone</div>
-            <div class="prize-sub">Stay connected in style</div>
+
+        <div class="card" style="padding:0; box-shadow:none; border:1px solid var(--border); overflow:hidden; margin-bottom:0;">
+            <img src="{{ content.third_prize_image_url|default:'https://images.unsplash.com/photo-1512499617640-c2f9990589ef?auto=format&fit=crop&w=900&q=80' }}" alt="{{ content.third_prize_name }}" style="width:100%; height:200px; object-fit:cover; display:block;">
+            <div style="padding:18px; text-align:center;">
+                <div class="badge" style="margin-bottom:10px;">{{ content.third_prize_label }}</div>
+                <div style="font-size:30px; margin-bottom:10px;">{{ content.third_prize_icon }}</div>
+                <div style="font-weight:800; margin-bottom:6px; font-size:18px; color:var(--primary);">{{ content.third_prize_name }}</div>
+                <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.third_prize_description }}</div>
+            </div>
         </div>
-    </div>
-    <div style="margin-top:16px; padding:14px 16px; background: var(--surface-muted, rgba(0,0,0,0.03)); border-radius:10px; font-size:14px; color: var(--text-muted);">
-        ➕ <strong>12 more prizes</strong> including vouchers, hampers, and surprise gifts will be revealed closer to draw day. The more tickets sold, the bigger the prize table gets!
     </div>
 </div>
 
-<!-- HOW IT WORKS -->
 <div class="card" style="margin-bottom:24px;">
     <div class="card-title">How It Works</div>
     <div class="grid-3" style="gap:16px;">
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:28px; margin-bottom:10px;">1️⃣</div>
-            <div style="font-weight:700; margin-bottom:6px;">Pay KSh {{ ticket_price|default:500 }}</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Send your ticket payment via CoopBank to the official church paybill/account.</div>
+            <div style="font-weight:700; margin-bottom:6px;">Pay KSh 500</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">Send your ticket payment via the official payment instructions.</div>
         </div>
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:28px; margin-bottom:10px;">2️⃣</div>
             <div style="font-weight:700; margin-bottom:6px;">Submit Confirmation</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Paste your CoopBank confirmation SMS to verify your payment.</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">Paste your confirmation SMS to verify your payment.</div>
         </div>
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:28px; margin-bottom:10px;">3️⃣</div>
-            <div style="font-weight:700; margin-bottom:6px;">Pick Your Number</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Choose your lucky ticket number and you're entered into the draw!</div>
+            <div style="font-weight:700; margin-bottom:6px;">Choose Your Number</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">Pick your lucky ticket number and join the draw.</div>
         </div>
     </div>
     <div style="text-align:center; margin-top:20px;">
@@ -168,57 +119,64 @@
     </div>
 </div>
 
-<!-- IMPACT: WORSHIP, GROW, BECOME -->
 <div class="card" style="margin-bottom:24px;">
-    <div class="card-title">Worship. Grow. Become.</div>
-    <p style="color: var(--text-muted); margin-top:-8px; margin-bottom:18px;">Here's what your ticket helps make possible:</p>
+    <div class="card-title">Worship • Grow • Become</div>
     <div class="grid-3" style="gap:16px;">
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:24px; margin-bottom:10px;">🙏</div>
-            <div style="font-weight:700; margin-bottom:6px;">Worship</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Strengthening praise and prayer in every youth gathering.</div>
+            <div style="font-weight:700; margin-bottom:6px;">{{ content.worship_title }}</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.worship_description }}</div>
         </div>
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:24px; margin-bottom:10px;">🌱</div>
-            <div style="font-weight:700; margin-bottom:6px;">Grow</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Supporting growth in faith, leadership, and community service.</div>
+            <div style="font-weight:700; margin-bottom:6px;">{{ content.grow_title }}</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.grow_description }}</div>
         </div>
         <div style="padding:18px; text-align:center; border:1px solid var(--border); border-radius:12px;">
             <div style="font-size:24px; margin-bottom:10px;">💫</div>
-            <div style="font-weight:700; margin-bottom:6px;">Become</div>
-            <div style="color: var(--text-muted); font-size:14px; line-height:1.6;">Helping young people become confident, compassionate leaders.</div>
+            <div style="font-weight:700; margin-bottom:6px;">{{ content.become_title }}</div>
+            <div style="color:var(--text-muted); font-size:14px; line-height:1.6;">{{ content.become_description }}</div>
         </div>
     </div>
 </div>
 
-<!-- FAQ -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-title">Need Assistance?</div>
+    <p style="color:var(--text-muted); line-height:1.8;">{{ content.support_description }}</p>
+    <div style="background:var(--bg); padding:18px; border-radius:12px; text-align:center; margin-top:14px;">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">WhatsApp • SMS • Call</div>
+        <div style="font-size:24px; font-weight:800; color:var(--primary);">
+            <a href="tel:{{ content.support_phone }}" style="text-decoration:none; color:inherit;">{{ content.support_phone }}</a>
+        </div>
+    </div>
+</div>
+
 <div class="card" style="margin-bottom:24px;">
     <div class="card-title">Frequently Asked Questions</div>
     <div style="display:grid; gap:10px;">
         <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
             <summary style="font-weight:700; cursor:pointer;">How do I pay for my ticket?</summary>
-            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">Pay KSh {{ ticket_price|default:500 }} via CoopBank to the official details on the <a href="{% url 'payment_instructions' %}">payment instructions page</a>, then submit your confirmation SMS when registering.</div>
+            <div style="color:var(--text-muted); margin-top:10px; line-height:1.6;">{{ content.faq_payment_answer }}</div>
         </details>
         <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
             <summary style="font-weight:700; cursor:pointer;">When and how will the draw take place?</summary>
-            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">The draw takes place on {% if event %}{{ event.draw_date|date:'F j, Y' }}{% else %}the announced date{% endif %} during the Youth Day Sunday service. Winners will be selected live and announced to the congregation.</div>
+            <div style="color:var(--text-muted); margin-top:10px; line-height:1.6;">{{ content.faq_draw_answer }}</div>
         </details>
         <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
             <summary style="font-weight:700; cursor:pointer;">Can I buy more than one ticket?</summary>
-            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">Yes! Each additional ticket increases your chance of winning and your support for the youth ministry's work.</div>
+            <div style="color:var(--text-muted); margin-top:10px; line-height:1.6;">{{ content.faq_more_tickets_answer }}</div>
         </details>
         <details style="border:1px solid var(--border); border-radius:10px; padding:14px 16px;">
             <summary style="font-weight:700; cursor:pointer;">Where do the proceeds go?</summary>
-            <div style="color: var(--text-muted); margin-top:10px; line-height:1.6;">All proceeds go directly toward KAG Clayworks Youth Ministry programs — discipleship materials, outreach events, camps, and Royal Rangers activities.</div>
+            <div style="color:var(--text-muted); margin-top:10px; line-height:1.6;">{{ content.faq_proceeds_answer }}</div>
         </details>
     </div>
 </div>
 
-<!-- FINAL CTA -->
 <div class="card" style="text-align:center; padding:40px 28px;">
     <div class="badge" style="margin-bottom:18px; display:inline-flex;">Worship · Grow · Become</div>
-    <h2 style="font-size: clamp(26px, 4vw, 34px); margin-bottom:12px;">Support The Youth. Win Big. Make An Impact.</h2>
-    <p style="max-width: 600px; margin: 0 auto 24px; color: var(--text-muted); line-height:1.8;">Where Every Soul Matters — including yours. Get your ticket today and stand a chance to win.</p>
+    <h2 style="font-size: clamp(26px, 4vw, 34px); margin-bottom:12px;">Celebrate Youth Day 2026 With Us.</h2>
+    <p style="max-width: 600px; margin: 0 auto 24px; color: var(--text-muted); line-height:1.8;">Where every soul matters. Get your ticket today and stand a chance to win.</p>
     <a href="{% url 'member_signup' %}" class="btn btn-primary btn-lg">🎟️ Purchase Your Raffle Ticket</a>
 </div>
 
